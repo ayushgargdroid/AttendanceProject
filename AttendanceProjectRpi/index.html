@@ -2,13 +2,10 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <title>AttendanceProject</title>
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="main.css"/>
+        <link rel="stylesheet" type="text/css" href="./public/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="./public/main.css"/>
         <link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
-        <script src="jquery.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="swipejs.js"></script>
     </head>
     <body class="container-fluid">
         <div id="keyboard-layout" class="hidden">
@@ -31,7 +28,7 @@
                 <div class="keyboard-key" id="key9">9</div>
                 <div class="keyboard-key invisible" ></div>
                 <div class="keyboard-key" style="padding:16 10 10 10" id="key10">
-                    <img src="ic_keyboard_backspace_black_24dp_1x.png"/>
+                    <img src="./public/ic_keyboard_backspace_black_24dp_1x.png"/>
                 </div>
             </div>
         </div>
@@ -40,7 +37,7 @@
                 <div class="row">
                     <div class="col-md-4"></div>
                     <div class="col-md-8">
-                        <img src="apollo-main-logo-2.jpg" class="img-responsive center-block" id="main-placeholder-logo"/>
+                        <img src="./public/apollo-main-logo-2.jpg" class="img-responsive center-block" id="main-placeholder-logo"/>
                         <form>
                             <div class="form-group has-feedback center-block" id="placeholder-form" id="login-pin-form">
                                 <input type="text" class="form-control" aria-describedby="inputSuccess2Status" placeholder="Pin" id="login-pin" value=""/>
@@ -59,7 +56,7 @@
                 <div class="container-fluid">
                     <!-- Brand and toggle get grouped for better mobile display -->
                     <div class="navbar-header">
-                        <a class="navbar-brand" href="#"><img src="apollo-main-logo-2.jpg" style="height:48px;width:150px;"></a>
+                        <a class="navbar-brand" href="#"><img src="./public/apollo-main-logo-2.jpg" style="height:48px;width:150px;"></a>
                     </div>
 
                     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -273,6 +270,13 @@
                 </div>
             </div>
         </div>
-        <script src="main.js"></script>
+        <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+        
+        <script src="./public/jquery.min.js"></script>
+        <script src="./public/js/bootstrap.min.js"></script>
+        <script src="./public/swipejs.js"></script>
+        <script src="./public/main.js"></script>
+        
+        <script>if (window.module) module = window.module;</script>
     </body>
 </html>

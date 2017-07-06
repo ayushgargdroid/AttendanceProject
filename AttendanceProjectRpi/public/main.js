@@ -90,7 +90,7 @@ function openUp(){
         slideDownObj.element = "#placeholder-screen";
         slideDownObj.followup = null;
         slideDownObj.initiate();
-    },3000);
+    },30000);
 }
 
 function updateTime(){
