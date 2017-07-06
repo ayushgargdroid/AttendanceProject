@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>Apollo Attendance System</title>
+        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="css/materialize.css">
+        <link rel="stylesheet" type="text/css" href="css/main.css"/>
+        <link rel="stylesheet" type="text/css" href="css/signup.css"/>
+    </head>
+    <body>
+        {{> topbar}}
+        <div class="container">
+            <div class="row custom-row"  id="login-card">
+                <div class="col s12 m6" id="laptop-card">
+                  <div class="card">
+                    <div class="card-image">
+                      <img src="images/user-theme.jpg">
+                      <span class="card-title">Sign Up Top Administrative Staff</span>
+                      </div>
+                    <div class="card-content">
+                        <form method="post">
+                          <div class="row custom-row">
+                            <div class="input-field col s12 cust-input-field">
+                              <input id="email" type="email" class="validate" name="email">
+                              <label for="email">Email</label>
+                            </div>
+                            <div class="input-field col s12 cust-input-field">
+                              <input id="password" type="password" class="validate" name="password">
+                              <label for="password">Password</label>
+                            </div>
+                            <div class="input-field col s12 cust-input-field">
+                              <input id="designation" type="text" class="validate" name="designation">
+                              <label for="designation">Designation</label>
+                            </div>
+                            <button class="btn waves-effect waves-light yellow-theme" type="submit" name="action">Submit
+                                <i class="material-icons right">send</i>
+                            </button>
+                          </div>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        
+<!--    JavaScript Files    -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/materialize.min.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

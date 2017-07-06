@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>Apollo Attendance System</title>
+        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="css/materialize.css">
+        <link rel="stylesheet" type="text/css" href="css/main.css"/>
+        <link rel="stylesheet" type="text/css" href="css/signup.css"/>
+        <style>
+            @media (min-width: 769px){
+                #login-card {
+                    margin-top: 15%;
+                }
+            }
+            @media (max-width: 769px){
+                #login-card {
+                    margin-top: 35%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        {{> topbar}}
+        <div class="container">
+            <div class="row custom-row"  id="login-card">
+                <div class="col s12 m6" id="laptop-card">
+                  <div class="card">
+                    <div class="card-image">
+                      <img src="images/user-theme.jpg">
+                      <span class="card-title">Add an Employee</span>
+                      </div>
+                    <div class="card-content">
+                        {{message}}
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        
+<!--    JavaScript Files    -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/materialize.min.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>
