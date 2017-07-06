@@ -1,0 +1,278 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>AttendanceProject</title>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="main.css"/>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
+        <script src="jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="swipejs.js"></script>
+    </head>
+    <body class="container-fluid">
+        <div id="keyboard-layout" class="hidden">
+            <div class="keyboard-row">
+                <div class="keyboard-key" id="key0">0</div>
+                <div class="keyboard-key" id="key1">1</div>
+                <div class="keyboard-key" id="key2">2</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="keyboard-key" id="key3">3</div>
+                <div class="keyboard-key" id="key4">4</div>
+                <div class="keyboard-key" id="key5">5</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="keyboard-key" id="key6">6</div>
+                <div class="keyboard-key" id="key7">7</div>
+                <div class="keyboard-key" id="key8">8</div>
+            </div>
+            <div class="keyboard-row-lowest">
+                <div class="keyboard-key" id="key9">9</div>
+                <div class="keyboard-key invisible" ></div>
+                <div class="keyboard-key" style="padding:16 10 10 10" id="key10">
+                    <img src="ic_keyboard_backspace_black_24dp_1x.png"/>
+                </div>
+            </div>
+        </div>
+        <div class="row"  id="placeholder-screen">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                        <img src="apollo-main-logo-2.jpg" class="img-responsive center-block" id="main-placeholder-logo"/>
+                        <form>
+                            <div class="form-group has-feedback center-block" id="placeholder-form" id="login-pin-form">
+                                <input type="text" class="form-control" aria-describedby="inputSuccess2Status" placeholder="Pin" id="login-pin" value=""/>
+                                <div id="success"><!--<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>--></div>
+                                <div id="failiure"><!--<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>--></div>
+                                <span id="inputSuccess2Status" class="sr-only">(success)</span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+        </div>
+        <div id="main-page">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#"><img src="apollo-main-logo-2.jpg" style="height:48px;width:150px;"></a>
+                    </div>
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li><a href="#">Link <span class="sr-only">(current)</span></a></li>
+                            <li><a href="#">Link</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Action</a></li>
+                                    <li><a href="#">Another action</a></li>
+                                    <li><a href="#">Something else here</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#">Separated link</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#">One more separated link</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#">Link</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Action</a></li>
+                                    <li><a href="#">Another action</a></li>
+                                    <li><a href="#">Something else here</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#">Separated link</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div><!-- /.navbar-collapse -->
+                </div><!-- /.container-fluid -->
+            </nav>
+            <div id="calendar-outerbox">
+                <p class="text-center">Saturday 24/9</p>
+                <div id="calendar-outer">
+                    <div id="calendar">
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">12am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">1am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">2am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">3am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">4am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">5am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">6am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">7am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">8am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">9am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">10am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">11am</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">12pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">1pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">2pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">3pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">4pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">5pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">6pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">7pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">8pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">9pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">10pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div class="calendar-cell">
+                            <div class="time-text text-right">11pm</div>
+                            <div class="time-show-outerbox">
+                                <div class="upper-time-show"></div>
+                                <div class="lower-time-show"></div>
+                            </div>
+                        </div>
+                        <div id="current-time"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>
