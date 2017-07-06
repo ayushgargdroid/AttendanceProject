@@ -26,7 +26,7 @@
 
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
-var url = require('url')
+const url = require('url')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -34,7 +34,7 @@ let win
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 495})
+  win = new BrowserWindow({width: 800, height: 495, frame: false, transparent: true, fullscreen: true})
 
   // and load the index.html of the app.
   win.loadURL(url.format({
