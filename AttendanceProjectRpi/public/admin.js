@@ -4,7 +4,7 @@ const SerialPort = require('serialport');
 var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600,
     autoOpen: false,
-    parser: SerialPort.parsers.readline('\n')
+    parser: SerialPort.parsers.readline('\r\n')
 });
 var openConn = () => {
     port.open((err) => {
@@ -26,6 +26,7 @@ var sendData = (data) => {
         });
     }
 }
+var i=0;
 openConn();
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();
@@ -57,5 +58,29 @@ $(document).ready(() => {
 })
 
 port.on('data',(data) => {
-    console.log(data.toString());
-})
+    var msg = data.toString();
+    if(msg === 'Remove finger'){
+        i = i + 1;
+        console.log(i);
+        if(i<=3){
+            $(`#to${i}`).css('display','block');
+        }
+        else if(i<=6){
+            $(`#fo${i}`).css('display','block');
+        }
+    }
+    if(_.isNumber(msg)){
+        if(i<=3){
+            var id1 = msg;
+            sendData('b');
+        }
+        else{
+            var id2 = msg;
+            port.close();
+        }
+    }
+    if(msg.includes('error') || msg == '-'){
+        console.log('error: '+msg);
+    }
+    console.log('Incoming: '+msg);
+}
