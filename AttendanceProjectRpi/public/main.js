@@ -162,8 +162,7 @@ function openUp2(){
         slideDownObj.element = "#placeholder-screen";
         slideDownObj.followup = null;
         slideDownObj.initiate();
-        port.close()
-        ipcRenderer.send('async',1)
+        ipcRenderer.send('async',1);
     },3000);
 }
 
@@ -330,7 +329,8 @@ var inputPin = function(){
 inputPin();
 openConn();
 port.on('data' ,function (data) {
-    if(data.toString != '-'){
+    var msg = data.toString();
+    if(Number.isInteger(_.toNumber(data))){
         openUp2();
     }
     port.close((err) => {
