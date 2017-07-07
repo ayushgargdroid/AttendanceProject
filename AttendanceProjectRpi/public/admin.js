@@ -27,6 +27,7 @@ var sendData = (data) => {
     }
 }
 var i=0;
+var id1,id2;
 openConn();
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();
@@ -66,21 +67,38 @@ port.on('data',(data) => {
             $(`#to${i}`).css('display','block');
         }
         else if(i<=6){
-            $(`#fo${i}`).css('display','block');
+            $(`#fo${i-3}`).css('display','block');
         }
     }
-    if(_.isNumber(msg)){
+    if(Number.isInteger(_.toNumber(msg))){
         if(i<=3){
-            var id1 = msg;
+            id1 = msg;
             sendData('b');
         }
         else{
-            var id2 = msg;
+            id2 = msg;
+            i = 0;
             port.close();
         }
     }
     if(msg.includes('error') || msg == '-'){
+        if(i<=3){
+            $('#myModal').modal('hide');
+            for(;i>0;i--){
+                $(`#to${i}`).css('display','none');
+            }
+        }
+        else{
+            port.write(`${id1}c`);
+            $('#myModal').modal('hide');
+            for(;i>3;i--){
+                $(`#fo${i}`).css('display','none');
+            }
+            for(;i>0;i--){
+                $(`#to${i}`).css('display','none');
+            }
+        }
         console.log('error: '+msg);
     }
     console.log('Incoming: '+msg);
-}
+})

@@ -5,12 +5,14 @@ var port = new SerialPort('/dev/ttyACM0',{
 });
  
 port.on('open', function() {
-  port.write('b', function(err) {
-    if (err) {
-      return console.log('Error on write: ', err.message);
+    for(var i=5;i>0;i--){
+        port.write(`{i}c`, function(err) {
+        if (err) {
+          return console.log('Error on write: ', err.message);
+        }
+        console.log('message written');
+      });
     }
-    console.log('message written');
-  });
 });
 
 port.on('data',(data) => {
