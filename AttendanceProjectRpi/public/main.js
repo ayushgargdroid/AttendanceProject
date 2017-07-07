@@ -197,13 +197,12 @@ $("#login-pin").swipe({
             slideUpObj.followup = slideDataObj;
             slideUpObj.initiate();
             loginAttemptUp = true;
-            setTimeout(() => {
-                sendData('a');
-            },1500);
         }
 }});
 $('.finger').click(()=>{
-    console.log('gfg');
+    setTimeout(() => {
+        sendData('a');
+    },1500);
 })
 var inputPin = function(){
     $("#key0").swipe({
