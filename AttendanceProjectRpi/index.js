@@ -27,6 +27,7 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
+var remote = require('remote');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -68,6 +69,13 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+ipcMain.on('async', (event, arg) => {  
+    console.log(arg);
+    if(arg==1){
+        remote.getCurrentWindow().reload();
+    }
+});
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
