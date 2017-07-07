@@ -83,13 +83,14 @@ port.on('data',(data) => {
     }
     if(msg.includes('error') || msg == '-'){
         if(i<=3){
+            port.close();
             $('#myModal').modal('hide');
             for(;i>0;i--){
                 $(`#to${i}`).css('display','none');
             }
         }
         else{
-            port.write(`${id1}c`);
+            sendData(`${id1}c`);
             $('#myModal').modal('hide');
             for(;i>3;i--){
                 $(`#fo${i}`).css('display','none');
@@ -97,6 +98,7 @@ port.on('data',(data) => {
             for(;i>0;i--){
                 $(`#to${i}`).css('display','none');
             }
+            port.close();
         }
         console.log('error: '+msg);
     }
