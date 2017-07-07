@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const nodemailer = require('nodemailer');
-const testSerial = require('./testSerial.js');
+const testSerial = require(__dirname+'/public/testSerial.js');
 var {ipcRenderer,remote} = require('electron');
 var main = remote.require(__dirname+'/index.js');
 
@@ -293,7 +293,7 @@ var inputPin = function(){
     });
 }
 inputPin();
-if(_.isNumber(testSerial.recieveData()){
+if(_.isNumber(testSerial.recieveData())){
    openUp2();
    testSerial.closeConn();
 }

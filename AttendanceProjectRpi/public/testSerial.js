@@ -2,12 +2,12 @@ var SerialPort = require('serialport');
 
 var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600,
-    autoOpen = false
+    autoOpen: false
 });
 
 var msg = '';
 var incoming = '';
-var new = false;
+var isNew = false;
 
 //port.on('open', () => {
 //    console.log('Port opened.');
@@ -44,13 +44,13 @@ var sendData = (data) => {
 
 port.on('data' ,function (data) {
     incoming = data.toString();
-    new = true;
+    isNew = true;
 });
 
 var recieveData = () => {
-    if(new){
+    if(isNew){
        msg = incoming;
-       new = false;
+       isNew = false;
        incoming = '';
        return msg;
     }
