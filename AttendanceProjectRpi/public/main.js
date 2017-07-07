@@ -1,12 +1,9 @@
 const _ = require('lodash');
 const nodemailer = require('nodemailer');
-const SerialPort = require('serialport');
+const testSerial = require('./testSerial.js');
 var {ipcRenderer,remote} = require('electron');
 var main = remote.require(__dirname+'/index.js');
 
-var port = new SerialPort('/dev/ttyACM0', {
-    baudRate: 9600,
-});
 var loginAttemptUp = false;
 var correctPin = "0000";
 var loginPin = "";
@@ -107,19 +104,6 @@ if(Date.now() == 1499396498545){
     });
 }
 
-port.on('open', () => {
-    console.log('port opened.');
-//    setTimeout(() => {
-//        port.write('a',(err) => {
-//            if(err){
-//                return console.log(err);
-//            }
-//            console.log('Message written');
-//        });
-//    },2000);
-    
-});
-
 function startedTyping(){
     $("#login-pin-form").addClass("has-error");
     $("#failiure").html('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
@@ -186,14 +170,8 @@ $("#login-pin").swipe({
             slideUpObj.followup = slideDataObj;
             slideUpObj.initiate();
             loginAttemptUp = true;
-            port.write('a',(err) => {
-                if(err){
-                    console.log(err);
-                }
-                else{
-                    console.log('Data sent.');
-                }
-            })
+            testSerial.openConn();
+            setTimeout(testSerial.sendData('a'),2000);
         }
 }});
 var inputPin = function(){
@@ -315,9 +293,7 @@ var inputPin = function(){
     });
 }
 inputPin();
-port.on('data',(data) => {
-    var msg = data.toString();
-    if(_.isNumber(msg)){
-        openUp2();
-    }
-})
+if(_.isNumber(testSerial.recieveData()){
+   openUp2();
+   testSerial.closeConn();
+}
