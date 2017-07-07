@@ -3,7 +3,8 @@ const SerialPort = require('serialport');
 
 var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600,
-    autoOpen: false
+    autoOpen: false,
+    parser: SerialPort.parsers.readline('\n')
 });
 var openConn = () => {
     port.open((err) => {
@@ -28,7 +29,7 @@ var sendData = (data) => {
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();
     openConn();
-    sendData('b');//
+    setTimeout(sendData('b'),1500);
     $('#myModalLabel').html(t);
     $('#myModal').modal();
     $('#close-button').click(() => {
@@ -51,4 +52,8 @@ var populateSelect = () => {
 }
 $(document).ready(() => {
     populateSelect();
+})
+
+port.on('data',(data) => {
+    console.log(data.toString());
 })
