@@ -164,7 +164,7 @@ function openUp2(){
         slideDownObj.initiate();
         port.close()
         ipcRenderer.send('async',1)
-    },30000);
+    },3000);
 }
 
 function updateTime(){

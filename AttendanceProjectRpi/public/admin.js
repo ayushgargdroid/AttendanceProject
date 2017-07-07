@@ -26,10 +26,12 @@ var sendData = (data) => {
         });
     }
 }
+openConn();
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();
-    openConn();
-    setTimeout(sendData('b'),1500);
+    setTimeout(()=>{
+        sendData('b');
+    },1500);
     $('#myModalLabel').html(t);
     $('#myModal').modal();
     $('#close-button').click(() => {
