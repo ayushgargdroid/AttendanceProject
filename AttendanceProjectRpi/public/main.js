@@ -202,6 +202,9 @@ $("#login-pin").swipe({
             },1500);
         }
 }});
+$('.finger').click(()=>{
+    console.log('gfg');
+})
 var inputPin = function(){
     $("#key0").swipe({
         tap:function(event,target){
