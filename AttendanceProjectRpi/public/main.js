@@ -1,5 +1,11 @@
+const _ = require('lodash');
+const nodemailer = require('nodemailer');
+var {ipcRenderer,remote} = require('electron');
+var main = remote.require(__dirname+'/index.js');
+
 var loginAttemptUp = false;
-var toSuccess = null;
+var correctPin = "0000";
+var loginPin = "";
 var slideUpObj = {
     start : 0,
     end : 0,
@@ -65,32 +71,67 @@ var slideDataObj = {
     element2 : "",
     diff : 0
 }
+
+let transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+        user: 'ayushgargdroid@gmail.com',
+        pass: 'donotopen1511'
+    }
+});
+
+//6am IST 7th July - 1499387400
+//86400 ms - 1 day
+//8:40 am - 1499397001144
+//9:40 am - 1499400601188
+
+if(Date.now() == 1499396498545){
+    console.log('Hola');
+    correctPin = _.toString(_.random(0,9999));
+    let mailOptions = {
+        from: 'Ayush Garg <ayushgargdroid@gmail.com>',
+        to: 'ayush.garg1@learner.manipal.edu',
+        subject: 'Hello World',
+        text: "Security Guard's Code",
+        html: `<h1>${correctPin}</h1>`
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message %s sent: %s', info.messageId, info.response);
+    });
+}
+
+
+
 function startedTyping(){
     $("#login-pin-form").addClass("has-error");
     $("#failiure").html('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
 }
-function openUp(){
+function openUp(){    
     toSuccess = Date.now();
     updateTime();
     $("#login-pin-form").addClass("has-success");
     $("#failiure").html('');
     $("#success").html('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
-    slideUpObj.start = 0;
-    slideUpObj.end = -485;
-    slideUpObj.fps = 5;
-    slideUpObj.element = "#placeholder-screen";
-    slideUpObj.followup = null;
-    slideUpObj.initiate();
-    setTimeout(() => {
-        console.log('yolo');
-        $('#main-placeholder-logo').css("margin-top","170px")
-        slideDownObj.start = -485;
-        slideDownObj.end = 0;
-        slideDownObj.fps = 5;
-        slideDownObj.element = "#placeholder-screen";
-        slideDownObj.followup = null;
-        slideDownObj.initiate();
-    },30000);
+    main.pong();
+//    slideUpObj.start = 0;
+//    slideUpObj.end = -485;
+//    slideUpObj.fps = 5;
+//    slideUpObj.element = "#placeholder-screen";
+//    slideUpObj.followup = null;
+//    slideUpObj.initiate();
+//    setTimeout(() => {
+//        console.log('yolo');
+//        $('#main-placeholder-logo').css("margin-top","170px")
+//        slideDownObj.start = -485;
+//        slideDownObj.end = 0;
+//        slideDownObj.fps = 5;
+//        slideDownObj.element = "#placeholder-screen";
+//        slideDownObj.followup = null;
+//        slideDownObj.initiate();
+//    },30000);
 }
 
 function updateTime(){
@@ -125,8 +166,6 @@ $("#login-pin").swipe({
             loginAttemptUp = true;
         }
 }});
-var correctPin = "0000";
-var loginPin = "";
 var inputPin = function(){
     $("#key0").swipe({
         tap:function(event,target){
@@ -246,6 +285,3 @@ var inputPin = function(){
     });
 }
 inputPin();
-if(Date.now() - toSuccess> 30000){
-    console.log('sfgfg');
-}

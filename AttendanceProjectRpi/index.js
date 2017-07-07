@@ -24,7 +24,7 @@
 //    console.log(`Server is up at ${port}`);
 //});
 
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 
@@ -34,7 +34,7 @@ let win
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 495, frame: false, transparent: true, fullscreen: true})
+  win = new BrowserWindow({width: 800, height: 495, fullscreen: true})
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -75,4 +75,13 @@ app.on('activate', () => {
   if (win === null) {
     createWindow()
   }
-})
+});
+
+exports.pong = () => {
+    console.log('das');
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, 'admin.html'),
+        protocol: 'file:',
+        slashes: true
+    }))
+}

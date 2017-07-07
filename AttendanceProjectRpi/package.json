@@ -13,6 +13,8 @@
     "electron": "^1.6.11",
     "express": "^4.15.3",
     "hbs": "^4.0.1",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "nodemailer": "^4.0.1",
+    "serialport": "^4.0.7"
   }
 }
