@@ -1,4 +1,9 @@
 const _ = require('lodash');
+const SerialPort = require('serialport');
+
+var port = new SerialPort('/dev/ttyACM0', {
+    baudRate: 9600,
+});
 
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();

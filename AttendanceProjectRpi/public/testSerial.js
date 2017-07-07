@@ -2,7 +2,6 @@ var SerialPort = require('serialport');
 
 var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600,
-    parser: SerialPort.parsers.readline('\r\n')
 });
 
 port.on('open', () => {
@@ -18,5 +17,5 @@ port.on('open', () => {
 });
 
 port.on('data' ,function (data) {
-    console.log(data);
-})
+    console.log(data.toString);
+});

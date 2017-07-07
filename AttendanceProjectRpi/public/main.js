@@ -1,8 +1,12 @@
 const _ = require('lodash');
 const nodemailer = require('nodemailer');
+const SerialPort = require('serialport');
 var {ipcRenderer,remote} = require('electron');
 var main = remote.require(__dirname+'/index.js');
 
+var port = new SerialPort('/dev/ttyACM0', {
+    baudRate: 9600,
+});
 var loginAttemptUp = false;
 var correctPin = "0000";
 var loginPin = "";
@@ -103,35 +107,53 @@ if(Date.now() == 1499396498545){
     });
 }
 
-
+port.on('open', () => {
+    console.log('port opened.');
+//    setTimeout(() => {
+//        port.write('a',(err) => {
+//            if(err){
+//                return console.log(err);
+//            }
+//            console.log('Message written');
+//        });
+//    },2000);
+    
+});
 
 function startedTyping(){
     $("#login-pin-form").addClass("has-error");
     $("#failiure").html('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
 }
-function openUp(){    
+function openUp1(){    
     toSuccess = Date.now();
     updateTime();
     $("#login-pin-form").addClass("has-success");
     $("#failiure").html('');
     $("#success").html('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
     main.pong();
-//    slideUpObj.start = 0;
-//    slideUpObj.end = -485;
-//    slideUpObj.fps = 5;
-//    slideUpObj.element = "#placeholder-screen";
-//    slideUpObj.followup = null;
-//    slideUpObj.initiate();
-//    setTimeout(() => {
-//        console.log('yolo');
-//        $('#main-placeholder-logo').css("margin-top","170px")
-//        slideDownObj.start = -485;
-//        slideDownObj.end = 0;
-//        slideDownObj.fps = 5;
-//        slideDownObj.element = "#placeholder-screen";
-//        slideDownObj.followup = null;
-//        slideDownObj.initiate();
-//    },30000);
+}
+function openUp2(){
+    toSuccess = Date.now();
+    updateTime();
+    $("#login-pin-form").addClass("has-success");
+    $("#failiure").html('');
+    $("#success").html('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
+    slideUpObj.start = 0;
+    slideUpObj.end = -485;
+    slideUpObj.fps = 5;
+    slideUpObj.element = "#placeholder-screen";
+    slideUpObj.followup = null;
+    slideUpObj.initiate();
+    setTimeout(() => {
+        console.log('yolo');
+        $('#main-placeholder-logo').css("margin-top","170px")
+        slideDownObj.start = -485;
+        slideDownObj.end = 0;
+        slideDownObj.fps = 5;
+        slideDownObj.element = "#placeholder-screen";
+        slideDownObj.followup = null;
+        slideDownObj.initiate();
+    },30000);
 }
 
 function updateTime(){
@@ -164,6 +186,14 @@ $("#login-pin").swipe({
             slideUpObj.followup = slideDataObj;
             slideUpObj.initiate();
             loginAttemptUp = true;
+            port.write('a',(err) => {
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    console.log('Data sent.');
+                }
+            })
         }
 }});
 var inputPin = function(){
@@ -174,7 +204,7 @@ var inputPin = function(){
             $("#login-pin").attr("value",$("#login-pin").attr("value")+"0");
             loginPin += "0";
             if(loginPin==correctPin){
-                openUp();
+                openUp1();
             }
         }
     });
@@ -285,3 +315,9 @@ var inputPin = function(){
     });
 }
 inputPin();
+port.on('data',(data) => {
+    var msg = data.toString();
+    if(_.isNumber(msg)){
+        openUp2();
+    }
+})
