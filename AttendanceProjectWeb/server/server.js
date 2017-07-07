@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const _ = require('lodash');
 const mongoose = require('mongoose');
+const port = process.env.PORT || 3000;
 
 var {Mongoose} = require('./db/mongoose');
 var {User} = require('./models/user');
@@ -13,7 +14,6 @@ var {Employee} = require('./models/employee');
 
 hbs.registerPartials(__dirname + '/../views/partials');
 var app = express();
-const port = process.env.PORT || 3000;
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -118,11 +118,11 @@ app.get('/employees-list',authenticate,(req,res) => {
     });
 });
 
-app.get('/signup',authenticate,(req,res) => {
+app.get('/signup',(req,res) => {
     res.render('signup.hbs');
 });
 
-app.post('/signup',authenticate,(req,res) => {
+app.post('/signup',(req,res) => {
     var newUser = _.pick(req.body,['email','password','designation']);
     
     bcrypt.genSalt(10, (err,salt) => {

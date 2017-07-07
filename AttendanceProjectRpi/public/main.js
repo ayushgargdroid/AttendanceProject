@@ -110,12 +110,14 @@ if(Date.now() == 1499396498545){
 }
 
 var openConn = () => {
-    port.open((err) => {
-        if(err){
-            return console.log(err);
-        }
-        console.log('Port opened');
-    });
+    if(!port.isOpen()){
+        port.open((err) => {
+            if(err){
+                return console.log(err);
+            }
+            console.log('Port opened');
+        });   
+    }
 }
 var sendData = (data) => {
     if(port.isOpen()){
