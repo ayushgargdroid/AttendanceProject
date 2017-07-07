@@ -1,8 +1,0 @@
-.hide-vertical{
-    overflow-x: hidden;
-}
-@media (max-width: 768px){
-    .no-padding-mob{
-        padding: 0;
-    }
-}
