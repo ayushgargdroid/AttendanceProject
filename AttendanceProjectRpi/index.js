@@ -27,7 +27,6 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
-var remote = require('remote');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -73,7 +72,11 @@ app.on('window-all-closed', () => {
 ipcMain.on('async', (event, arg) => {  
     console.log(arg);
     if(arg==1){
-        remote.getCurrentWindow().reload();
+        win.loadURL(url.format({
+            pathname: path.join(__dirname, 'index.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
     }
 });
 
