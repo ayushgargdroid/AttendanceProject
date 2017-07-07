@@ -171,7 +171,9 @@ $("#login-pin").swipe({
             slideUpObj.initiate();
             loginAttemptUp = true;
             testSerial.openConn();
-            setTimeout(testSerial.sendData('a'),2000);
+            setTimeout(() => {
+                testSerial.sendData('a');
+            },2000);
         }
 }});
 var inputPin = function(){

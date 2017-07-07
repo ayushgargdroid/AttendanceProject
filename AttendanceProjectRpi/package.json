@@ -16,5 +16,8 @@
     "lodash": "^4.17.4",
     "nodemailer": "^4.0.1",
     "serialport": "^4.0.7"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.5.11"
   }
 }
