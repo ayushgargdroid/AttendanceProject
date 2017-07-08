@@ -79,8 +79,8 @@ $(document).on('change','#sel1',(e) => {
         var id1 = employee[0].id1;
         var id2 = employee[0].id2;
         setTimeout(()=>{
-            sendData(`{id1}c`);
-            sendData(`{id2}c`);
+            sendData(`${id1}c`);
+            sendData(`${id2}c`);
         },500);
         employee[0].verified = false;
         employee[0].id1 = '';

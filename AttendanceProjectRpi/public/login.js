@@ -65,17 +65,37 @@ ipcRenderer.on('async-reply',(event,args)=>{
 
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();
-    setTimeout(()=>{
-        sendData(`{id}c`);
-    },1500);
-    $('#myModalLabel').html(t);
-    $('#myModal').modal();
+    selected = mongoose.Types.ObjectId(ids[t-1]);
+    Employee.find({_id: selected},(employee)=>{
+        var current = new Date();
+        var month = current.getMonth();
+        var day = current.getDate();
+        var hours = current.getHours();
+        var minutes = current.getMinutes();
+        if(employee.live[month-1][day-1][0].length === 0){
+            employee.live[month-1][day-1][0].push(hours+':'+minutes);
+            $('#message').html('Employee successfully logged in!');
+        }
+        else if(employee.live[month-1][day-1][0].length > employee.live[month-1][day-1][1].length){
+            employee.live[month-1][day-1][1].push(hours+':'+minutes);
+            $('#message').html('Employee successfully logged out!');
+        }
+        else if(employee.live[month-1][day-1][0].length === employee.live[month-1][day-1][1].length){
+            employee.live[month-1][day-1][0].push(hours+':'+minutes);
+            $('#message').html('Employee successfully logged in!');
+        }
+        Employee.save().then(()=>{
+            console.log('Successfully updated.');
+            $('#myModalLabel').html(t);
+            $('#myModal').modal();
+        })
+    });
     $('#close-button').click(() => {
         _.remove(emp,(name) => {
             return name === t;
         });
         populateSelect();
-    })
+    });
 });
 $(document).ready(()=>{
     ipcRenderer.send('async',2);
