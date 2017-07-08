@@ -1,5 +1,8 @@
 const _ = require('lodash');
 const nodemailer = require('nodemailer');
+const mongoose = require('mongoose');
+var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+var {Employee} = require(__dirname+'/public/db/employee.js');
 var {ipcRenderer,remote} = require('electron');
 var main = remote.require(__dirname+'/index.js');
 var SerialPort = require('serialport');
@@ -345,8 +348,45 @@ port.on('data' ,function (data) {
         t = t.toString();
         _.find(employees,(employee)=>{
             if(employee.id1 == t || employee.id2 == t){
-                openUp2();
-                return true;
+                _id = mongoose.Types.ObjectId(employee._id);
+                Employee.find({_id},(err,employee)=>{
+                    if(err){
+                        return console.log(err);
+                    }
+                    var current = new Date();
+                    var month = current.getMonth();
+                    var day = current.getDate();
+                    var hours = current.getHours();
+                    var minutes = current.getMinutes();
+                    var live1  = employee[0].live;
+                    console.log(live1[month][day-1][0]);
+                    if(live1[month][day-1][0].length === 0){
+                        live1[month][day-1][0].push(hours+':'+minutes);
+                        $('#message').html('Employee successfully logged in!');
+                    }
+                    else if(live1[month][day-1][0].length > live1[month][day-1][1].length){
+                        live1[month][day-1][1].push(hours+':'+minutes);
+                        $('#message').html('Employee successfully logged out!');
+                    }
+                    else if(live1[month][day-1][0].length === live1[month][day-1][1].length){
+                        live1[month][day-1][0].push(hours+':'+minutes);
+                        $('#message').html('Employee successfully logged in!');
+                    }
+                    employee[0].live = live1;
+                    employee[0].markModified('live');
+                    employee[0].save().then((docs)=>{
+                    console.log('---');
+                    console.log('month '+month);
+                    console.log('day '+day);
+                    console.log('hours '+hours);
+                    console.log('minutes '+minutes);
+                    console.log(employee[0].live[month][day-1][0]);
+                    console.log(employee[0].live[month][day-1][1]);
+                    console.log('Successfully updated.');
+                    openUp2();
+                    return true;  
+                });
+                });
             }
             return false;
         });

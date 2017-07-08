@@ -98,6 +98,7 @@ EmployeeSchema.methods.setupDB = function(){
             employee.live[i][j].push([]);
         }
     }
+//    employee.months[0].January.a.in.push('a');
     return employee.save();
 }
 

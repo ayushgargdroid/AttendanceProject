@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const SerialPort = require('serialport');
+const mongoose = require('mongoose');
 var {ipcRenderer} = require('electron');
 var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
-var {User} = require(__dirname+'/public/db/user.js');
 var collector = '';
 var emp = ['Please select something'];
 var ids = [];
@@ -66,29 +66,43 @@ ipcRenderer.on('async-reply',(event,args)=>{
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();
     selected = mongoose.Types.ObjectId(ids[t-1]);
-    Employee.find({_id: selected},(employee)=>{
+    Employee.find({_id: selected},(err,employee)=>{
+        if(err){
+            return console.log(err);
+        }
         var current = new Date();
         var month = current.getMonth();
         var day = current.getDate();
         var hours = current.getHours();
         var minutes = current.getMinutes();
-        if(employee.live[month-1][day-1][0].length === 0){
-            employee.live[month-1][day-1][0].push(hours+':'+minutes);
+        var live1  = employee[0].live;
+        console.log(live1[month][day-1][0]);
+        if(live1[month][day-1][0].length === 0){
+            live1[month][day-1][0].push(hours+':'+minutes);
             $('#message').html('Employee successfully logged in!');
         }
-        else if(employee.live[month-1][day-1][0].length > employee.live[month-1][day-1][1].length){
-            employee.live[month-1][day-1][1].push(hours+':'+minutes);
+        else if(live1[month][day-1][0].length > live1[month][day-1][1].length){
+            live1[month][day-1][1].push(hours+':'+minutes);
             $('#message').html('Employee successfully logged out!');
         }
-        else if(employee.live[month-1][day-1][0].length === employee.live[month-1][day-1][1].length){
-            employee.live[month-1][day-1][0].push(hours+':'+minutes);
+        else if(live1[month][day-1][0].length === live1[month][day-1][1].length){
+            live1[month][day-1][0].push(hours+':'+minutes);
             $('#message').html('Employee successfully logged in!');
         }
-        Employee.save().then(()=>{
+        employee[0].live = live1;
+        employee[0].markModified('live');
+        employee[0].save().then((docs)=>{
+            console.log('---');
+            console.log('month '+month);
+            console.log('day '+day);
+            console.log('hours '+hours);
+            console.log('minutes '+minutes);
+            console.log(employee[0].live[month][day-1][0]);
+            console.log(employee[0].live[month][day-1][1]);
             console.log('Successfully updated.');
             $('#myModalLabel').html(t);
             $('#myModal').modal();
-        })
+        });
     });
     $('#close-button').click(() => {
         _.remove(emp,(name) => {

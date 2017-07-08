@@ -5,7 +5,6 @@ const _ = require('lodash');
 
 var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
-var {User} = require(__dirname+'/public/db/user.js');
 var employees = [];
 
 Employee.find({} ,(err,emps)=>{

@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 var {ipcRenderer} = require('electron');
 var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
-var {User} = require(__dirname+'/public/db/user.js');
 var collector = '';
 var emp = ['Please select something'];
 var ids = [];
