@@ -199,11 +199,17 @@ function updateTime(){
 
 $("#login-pin").swipe({
     tap:function(event,target){
-        if(port.isOpen()){
-            sendData('d');
-            port.close();
+        if(loginAttemptUp==true){
+            if(port.isOpen()){
+                sendData('d');
+                port.close();
+            }
         }
         if(loginAttemptUp==false){
+            if(port.isOpen()){
+                sendData('d');
+                port.close();
+            }
             $("#keyboard-layout").removeClass('hidden');
             slideUpObj.start = 480;
             slideUpObj.end = 310;
