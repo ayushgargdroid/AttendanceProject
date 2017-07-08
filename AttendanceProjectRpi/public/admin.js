@@ -105,7 +105,7 @@ port.on('data',(data) => {
                         console.log(id1+' '+id2);
                     })
                 }
-            })//
+            })
             port.close();
         }
     }

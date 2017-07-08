@@ -1,36 +1,24 @@
-//const _ = require('lodash');
-//const express = require('express');
-//const bodyParser = require('body-parser');
-//const hbs = require('hbs');
-//
-//var app = express();
-//const port = process.env.PORT || 3000;
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({
-//  extended: true
-//})); 
-//
-//app.set('view engine','hbs');
-//
-//app.use(express.static(__dirname + '/public'));
-//
-//app.get('/', (req,res) => {
-//    res.render('index.hbs',{
-//        name:'Ayush Garg'
-//    });
-//});
-//
-//app.listen(port, () => {
-//    console.log(`Server is up at ${port}`);
-//});
+const {app, BrowserWindow, ipcMain} = require('electron');
+const path = require('path');
+const url = require('url');
+const _ = require('lodash');
 
-const {app, BrowserWindow, ipcMain} = require('electron')
-const path = require('path')
-const url = require('url')
+var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+var {Employee} = require(__dirname+'/public/db/employee.js');
+var {User} = require(__dirname+'/public/db/user.js');
+var employees = [];
 
-//var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
-//var {Employee} = require(__dirname+'/public/db/employee.js');
-//var {User} = require(__dirname+'/public/db/user.js');
+Employee.find({} ,(err,emps)=>{
+    if(err){
+        return console.log(err);
+    }
+    _.forEach(emps,function(emp){
+        var empData = _.pick(emp,['name','_id','id1','id2','verified']);
+        employees.push(empData);
+    })
+    console.log(employees);
+    createWindow();
+});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -62,7 +50,10 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+//setTimeout(()=>{
+//    app.on('ready', createWindow);
+//},2000);
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -81,6 +72,9 @@ ipcMain.on('async', (event, arg) => {
             protocol: 'file:',
             slashes: true
         }))
+    }
+    else if(arg==2){
+        event.sender.send('async-reply',employees);
     }
 });
 

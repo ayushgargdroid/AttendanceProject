@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer');
 var {ipcRenderer,remote} = require('electron');
 var main = remote.require(__dirname+'/index.js');
 var SerialPort = require('serialport');
+var employees = [];
 
 var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600,
@@ -108,7 +109,9 @@ if(Date.now() == 1499396498545){
         console.log('Message %s sent: %s', info.messageId, info.response);
     });
 }
-
+ipcRenderer.on('async-reply',(event,arg)=>{
+    employees = arg;
+})
 var openConn = () => {
     if(!port.isOpen()){
         port.open((err) => {
@@ -337,7 +340,18 @@ inputPin();
 openConn();
 port.on('data' ,function (data) {
     var msg = data.toString();
-    if(Number.isInteger(_.toNumber(data))){
-        openUp2();
+    var t = _.toNumber(data);
+    if(Number.isInteger(t)){
+        t = t.toString();
+        _.find(employees,(employee)=>{
+            if(employee.id1 == t || employee.id2 == t){
+                openUp2();
+                return true;
+            }
+            return false;
+        });
     }
 });
+$(document).ready(()=>{
+    ipcRenderer.send('async',2);
+})
