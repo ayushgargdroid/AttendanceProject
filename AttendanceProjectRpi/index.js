@@ -84,6 +84,14 @@ ipcMain.on('async', (event, arg) => {
         event.sender.send('async-reply',employees);
     }
     else if(arg==3){
+        employees = [];
+        getData();
+    }
+});
+
+ipcMain.on('sync', (event, arg) => {  
+    if(arg==3){
+        employees = [];
         getData();
     }
 });

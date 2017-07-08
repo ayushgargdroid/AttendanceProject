@@ -139,9 +139,9 @@ port.on('data',(data) => {
                         if(err){
                             return console.log(err);
                         }
+                        ipcRenderer.sendSync('sync',3);
                         console.log('Saved'+id1+' '+id2);
                         port.close();
-                        ipcRenderer.send('async',3);
                     })
                 }
             })
