@@ -126,17 +126,21 @@ var openConn = () => {
     }
 }
 var sendData = (data) => {
+    var timeout = 0;
     if(!port.isOpen()){
         openConn();
+        timeout = 1500;
     }
-    console.log('Port checked for opening');
-    console.log(data);
-    port.write(data,(err) => {
-        if(err){
-            return console.log(err);
-        }
-        console.log(data + ' sent.');
-    });
+    setTimeout(()=>{
+        console.log('Port checked for opening');
+        console.log(data);
+        port.write(data,(err) => {
+            if(err){
+                return console.log(err);
+            }
+            console.log(data + ' sent.');
+        });
+    },timeout);
 }
 function startedTyping(){
     $("#login-pin-form").addClass("has-error");
