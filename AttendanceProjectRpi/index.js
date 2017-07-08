@@ -7,7 +7,7 @@ var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
 var employees = [];
 
-var getData = (callback)=>{
+exports.getData = (callback)=>{
     Employee.find({} ,(err,emps)=>{
         if(err){
             return console.log(err);
@@ -26,7 +26,7 @@ var getData = (callback)=>{
         }
     });
 }
-getData(createWindow);
+exports.getData(createWindow);
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
@@ -82,17 +82,6 @@ ipcMain.on('async', (event, arg) => {
     }
     else if(arg==2){
         event.sender.send('async-reply',employees);
-    }
-    else if(arg==3){
-        employees = [];
-        getData();
-    }
-});
-
-ipcMain.on('sync', (event, arg) => {  
-    if(arg==3){
-        employees = [];
-        getData();
     }
 });
 

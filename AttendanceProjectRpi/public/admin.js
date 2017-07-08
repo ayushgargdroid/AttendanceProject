@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const SerialPort = require('serialport');
 const mongoose = require('mongoose');
-var {ipcRenderer} = require('electron');
+var {ipcRenderer,remote} = require('electron');
+var main = remote.require(__dirname+'/index.js');
 var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
 var collector = '';
@@ -139,7 +140,7 @@ port.on('data',(data) => {
                         if(err){
                             return console.log(err);
                         }
-                        ipcRenderer.sendSync('sync',3);
+                        main.getData();
                         console.log('Saved'+id1+' '+id2);
                         port.close();
                     })
