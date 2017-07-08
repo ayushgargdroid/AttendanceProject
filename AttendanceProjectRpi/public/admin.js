@@ -37,7 +37,6 @@ ipcRenderer.on('async-reply',(event,args)=>{
     })
     populateSelect();
 });
-
 var openConn = () => {
     port.open((err) => {
         if(err){
@@ -60,22 +59,21 @@ var sendData = (data) => {
 }
 var i=0;
 var id1,id2;
-openConn();
-$(document).on('change','#sel1',(e) => {
-    var t = $('#sel1').val();
-    selected = t;
-    setTimeout(()=>{
-        sendData('b');
-    },1500);
-    $('#myModalLabel').html(emp[t]);
-    $('#myModal').modal();
-    $('#close-button').click(() => {
-        _.remove(emp,(inte) => {
-            return inte === t;
-        });
-        populateSelect();
-    })
-});
+//$(document).on('change','#sel1',(e) => {
+//    var t = $('#sel1').val();
+//    selected = t;
+//    setTimeout(()=>{
+//        sendData('b');
+//    },1500);
+//    $('#myModalLabel').html(emp[t]);
+//    $('#myModal').modal();
+//    $('#close-button').click(() => {
+//        _.remove(emp,(inte) => {
+//            return inte === t;
+//        });
+//        populateSelect();
+//    })
+//});
 
 var populateSelect = () => {
     for(var j=0;j<emp.length;j++){
@@ -84,6 +82,29 @@ var populateSelect = () => {
     $('#sel1').html(collector);
     collector = '';
 }
+
+$('#sel1').click(()=>{
+    console.log($('#sel1').val());
+    var t = $('#sel1').val();
+    if(t==0){
+        return;
+    }
+    if(!port.isOpen()){
+        openConn();
+    }
+    selected = t;
+    setTimeout(()=>{
+        sendData('b');
+    },1500);
+    $('#myModalLabel').html(emp[t]);
+    $('#myModal').modal();
+    $('#close-button').click(() => {
+        _.remove(emp,(inte) => {
+            return inte === emp[t];
+        });
+        populateSelect();
+    })
+});
 
 port.on('data',(data) => {
     var msg = data.toString();
@@ -114,12 +135,15 @@ port.on('data',(data) => {
                     emps[0].id1 = id1;
                     emps[0].id2 = id2;
                     emps[0].verified = true;
-                    emps[0].save().then(() => {
-                        console.log(id1+' '+id2);
+                    emps[0].save().then((err,doc) => {
+                        if(err){
+                            return console.log(err);
+                        }
+                        console.log('Saved'+id1+' '+id2);
+                        port.close();
                     })
                 }
             })
-            port.close();
         }
     }
     if(msg.includes('error') || msg == '-'){
@@ -145,6 +169,7 @@ port.on('data',(data) => {
     }
     console.log('Incoming: '+msg);
 });
+openConn();
 $(document).ready(()=>{
     ipcRenderer.send('async',2);
-})
+});

@@ -129,7 +129,7 @@ var sendData = (data) => {
     var timeout = 0;
     if(!port.isOpen()){
         openConn();
-        timeout = 1500;
+        timeout = 3000;
     }
     setTimeout(()=>{
         console.log('Port checked for opening');

@@ -8,6 +8,10 @@ var collector = '';
 var emp = ['Please select something'];
 var ids = [];
 
+$('#sel1').click(()=>{
+    console.log($('#sel1').val());
+})
+
 var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600,
     autoOpen: false,
