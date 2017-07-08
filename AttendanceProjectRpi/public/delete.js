@@ -85,7 +85,9 @@ $(document).on('change','#sel1',(e) => {
         employee[0].verified = false;
         employee[0].id1 = '';
         employee[0].id2 = '';
-        console.log('Deleted '+employee[0].name);
+        employee[0].save().then(()=>{
+            console.log('Deleted '+employee[0].name);    
+        })
     });
     $('#myModalLabel').html(t);
     $('#myModal').modal();
