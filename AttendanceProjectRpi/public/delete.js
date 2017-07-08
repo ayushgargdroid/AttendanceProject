@@ -96,4 +96,3 @@ $(document).on('change','#sel1',(e) => {
 $(document).ready(()=>{
     ipcRenderer.send('async',2);
 });
-console.log('yoda');

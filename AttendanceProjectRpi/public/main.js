@@ -354,4 +354,5 @@ port.on('data' ,function (data) {
 });
 $(document).ready(()=>{
     ipcRenderer.send('async',2);
-})
+});
+console.log('yoda');
