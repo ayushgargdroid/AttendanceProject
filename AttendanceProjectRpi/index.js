@@ -14,6 +14,7 @@ Employee.find({} ,(err,emps)=>{
     }
     _.forEach(emps,function(emp){
         var empData = _.pick(emp,['name','_id','id1','id2','verified']);
+        empData._id = emp._id.toString();
         employees.push(empData);
     })
     console.log(employees);

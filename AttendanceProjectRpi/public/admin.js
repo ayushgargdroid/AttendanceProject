@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const SerialPort = require('serialport');
+const mongoose = require('mongoose');
 var {ipcRenderer} = require('electron');
 var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');

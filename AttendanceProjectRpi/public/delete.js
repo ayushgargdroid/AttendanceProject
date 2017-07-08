@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const SerialPort = require('serialport');
+const mongoose = require('mongoose');
 var {ipcRenderer} = require('electron');
 var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
@@ -37,7 +38,7 @@ var sendData = (data) => {
 ipcRenderer.on('async-reply',(event,args)=>{
     employees = args;
     _.forEach(employees,function(emp1){
-        if(emp1.verified){
+        if(emp1.verified==true){
             emp.push(emp1.name);
             ids.push(emp1._id);    
         }
@@ -64,21 +65,23 @@ var populateSelect = () => {
 
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();
-    selected = t;
-    var selectedEmployee = _.find(employees,(employee)=>{
-        if(ids[selected-1]==employee._id){
-            return true;
-        }
-        return false;
-    });
-    setTimeout(()=>{
-        sendData(`{selectedEmployee.id1}c`);
-        sendData(`{selectedEmployee.id2}c`);
-    },1500);
-    Employee.find({_id: selectedEmployee._id},(err,employee)=>{
+    selected = mongoose.Types.ObjectId(ids[t-1]);
+//    var selectedEmployee = _.find(employees,(employee)=>{
+//        if(ids[selected-1]==employee._id){
+//            return true;
+//        }
+//        return false;
+//    });
+    Employee.find({_id: selected},(err,employee)=>{
         if(err){
             return console.log(err);
         }
+        var id1 = employee[0].id1;
+        var id2 = employee[0].id2;
+        setTimeout(()=>{
+            sendData(`{id1}c`);
+            sendData(`{id2}c`);
+        },500);
         employee[0].verified = false;
         employee[0].id1 = '';
         employee[0].id2 = '';
