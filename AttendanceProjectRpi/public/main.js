@@ -126,16 +126,17 @@ var openConn = () => {
     }
 }
 var sendData = (data) => {
-    if(port.isOpen()){
-        console.log('Port checked for opening');
-        console.log(data);
-        port.write(data,(err) => {
-            if(err){
-                return console.log(err);
-            }
-            console.log(data + ' sent.');
-        });
+    if(!port.isOpen()){
+        openConn();
     }
+    console.log('Port checked for opening');
+    console.log(data);
+    port.write(data,(err) => {
+        if(err){
+            return console.log(err);
+        }
+        console.log(data + ' sent.');
+    });
 }
 function startedTyping(){
     $("#login-pin-form").addClass("has-error");
