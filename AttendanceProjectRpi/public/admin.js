@@ -141,6 +141,7 @@ port.on('data',(data) => {
                         }
                         console.log('Saved'+id1+' '+id2);
                         port.close();
+                        ipcRenderer.send('async',3);
                     })
                 }
             })

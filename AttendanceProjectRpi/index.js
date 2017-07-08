@@ -16,7 +16,7 @@ var getData = (callback)=>{
             var empData = _.pick(emp,['name','_id','id1','id2','verified']);
             empData._id = emp._id.toString();
             employees.push(empData);
-        })
+        });
         console.log(employees);
         if(!callback){
             
