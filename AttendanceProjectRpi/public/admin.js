@@ -1,11 +1,13 @@
 const _ = require('lodash');
 const SerialPort = require('serialport');
+var {ipcRenderer} = require('electron');
 var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
 var {User} = require(__dirname+'/public/db/user.js');
 var collector = '';
 var emp = ['Please select from below'];
 var ids = [];
+var employees = [];
 var selected;
 
 var port = new SerialPort('/dev/ttyACM0', {
@@ -14,13 +16,24 @@ var port = new SerialPort('/dev/ttyACM0', {
     parser: SerialPort.parsers.readline('\r\n')
 });
 
-Employee.find({verified: false} ,(err,emps)=>{
-    if(err){
-        return console.log(err);
-    }
-    _.forEach(emps,function(emp1){
-        emp.push(emp1.name);
-        ids.push(emp1._id);
+//Employee.find({verified: false} ,(err,emps)=>{
+//    if(err){
+//        return console.log(err);
+//    }
+//    _.forEach(emps,function(emp1){
+//        emp.push(emp1.name);
+//        ids.push(emp1._id);
+//    })
+//    populateSelect();
+//});
+
+ipcRenderer.on('async-reply',(event,args)=>{
+    employees = args;
+    _.forEach(employees,function(emp1){
+        if(emp1.verified==false){
+            emp.push(emp1.name);
+            ids.push(emp1._id);    
+        }
     })
     populateSelect();
 });
@@ -131,4 +144,7 @@ port.on('data',(data) => {
         console.log('error: '+msg);
     }
     console.log('Incoming: '+msg);
+});
+$(document).ready(()=>{
+    ipcRenderer.send('async',2);
 })
