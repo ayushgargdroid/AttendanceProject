@@ -7,19 +7,26 @@ var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
 var employees = [];
 
-Employee.find({} ,(err,emps)=>{
-    if(err){
-        return console.log(err);
-    }
-    _.forEach(emps,function(emp){
-        var empData = _.pick(emp,['name','_id','id1','id2','verified']);
-        empData._id = emp._id.toString();
-        employees.push(empData);
-    })
-    console.log(employees);
-    createWindow();
-});
-
+var getData = (callback)=>{
+    Employee.find({} ,(err,emps)=>{
+        if(err){
+            return console.log(err);
+        }
+        _.forEach(emps,function(emp){
+            var empData = _.pick(emp,['name','_id','id1','id2','verified']);
+            empData._id = emp._id.toString();
+            employees.push(empData);
+        })
+        console.log(employees);
+        if(!callback){
+            
+        }
+        else{
+            callback();
+        }
+    });
+}
+getData(createWindow);
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
@@ -76,6 +83,9 @@ ipcMain.on('async', (event, arg) => {
     else if(arg==2){
         event.sender.send('async-reply',employees);
     }
+    else if(arg==3){
+        getData();
+    }
 });
 
 app.on('activate', () => {
@@ -87,7 +97,6 @@ app.on('activate', () => {
 });
 
 exports.pong = () => {
-    console.log('das');
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'admin.html'),
         protocol: 'file:',

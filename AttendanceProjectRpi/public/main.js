@@ -175,8 +175,10 @@ function openUp2(){
                 return console.log(err);
             }
         })
-        ipcRenderer.send('async',1);
-    },3000);
+        setTimeout(()=>{
+            ipcRenderer.send('async',1);    
+        },1000);
+    },5000);
 }
 
 function updateTime(){
@@ -193,6 +195,10 @@ function updateTime(){
 $("#login-pin").swipe({
     tap:function(event,target){
         if(loginAttemptUp==false){
+            if(port.isOpen()){
+                sendData('d');
+                port.close();
+            }
             $("#keyboard-layout").removeClass('hidden');
             slideUpObj.start = 480;
             slideUpObj.end = 310;
@@ -214,8 +220,8 @@ $("#login-pin").swipe({
 $('.finger').click(()=>{
     setTimeout(() => {
         sendData('a');
-    },1500);
-})
+    },500);
+});
 var inputPin = function(){
     $("#key0").swipe({
         tap:function(event,target){
@@ -339,8 +345,6 @@ var inputPin = function(){
         }
     });
 }
-inputPin();
-openConn();
 port.on('data' ,function (data) {
     var msg = data.toString();
     var t = _.toNumber(data);
@@ -395,4 +399,5 @@ port.on('data' ,function (data) {
 $(document).ready(()=>{
     ipcRenderer.send('async',2);
 });
-console.log('yoda');
+inputPin();
+openConn();
