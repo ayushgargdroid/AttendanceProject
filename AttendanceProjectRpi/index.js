@@ -28,6 +28,10 @@ const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 
+//var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+//var {Employee} = require(__dirname+'/public/db/employee.js');
+//var {User} = require(__dirname+'/public/db/user.js');
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win

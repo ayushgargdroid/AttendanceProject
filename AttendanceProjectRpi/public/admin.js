@@ -1,11 +1,30 @@
 const _ = require('lodash');
 const SerialPort = require('serialport');
+var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+var {Employee} = require(__dirname+'/public/db/employee.js');
+var {User} = require(__dirname+'/public/db/user.js');
+var collector = '';
+var emp = ['Please select from below'];
+var ids = [];
+var selected;
 
 var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600,
     autoOpen: false,
     parser: SerialPort.parsers.readline('\r\n')
 });
+
+Employee.find({verified: false} ,(err,emps)=>{
+    if(err){
+        return console.log(err);
+    }
+    _.forEach(emps,function(emp1){
+        emp.push(emp1.name);
+        ids.push(emp1._id);
+    })
+    populateSelect();
+});
+
 var openConn = () => {
     port.open((err) => {
         if(err){
@@ -31,32 +50,27 @@ var id1,id2;
 openConn();
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();
+    selected = t;
     setTimeout(()=>{
         sendData('b');
     },1500);
-    $('#myModalLabel').html(t);
+    $('#myModalLabel').html(emp[t]);
     $('#myModal').modal();
     $('#close-button').click(() => {
-        _.remove(emp,(name) => {
-            return name === t;
+        _.remove(emp,(inte) => {
+            return inte === t;
         });
         populateSelect();
     })
-})
-
-var collector = '';
-var emp = ['Please select something','Ayush','Tanish','Sharma','Gupta'];
+});
 
 var populateSelect = () => {
-    for(var i=0;i<emp.length;i++){
-        collector = collector + `<option value="${emp[i]}">${emp[i]}</option>`
+    for(var j=0;j<emp.length;j++){
+        collector = collector + `<option value="${j}">${emp[j]}</option>`
     }
     $('#sel1').html(collector);
     collector = '';
 }
-$(document).ready(() => {
-    populateSelect();
-})
 
 port.on('data',(data) => {
     var msg = data.toString();
@@ -78,6 +92,20 @@ port.on('data',(data) => {
         else{
             id2 = msg;
             i = 0;
+            _id = mongoose.Types.ObjectId(ids[selected-1]);
+            Employee.find({_id},(err,emps) => {
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    emps[0].id1 = id1;
+                    emps[0].id2 = id2;
+                    emps[0].verified = true;
+                    emps[0].save().then(() => {
+                        console.log(id1+' '+id2);
+                    })
+                }
+            })//
             port.close();
         }
     }

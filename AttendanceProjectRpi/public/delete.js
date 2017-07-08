@@ -1,5 +1,10 @@
 const _ = require('lodash');
 const SerialPort = require('serialport');
+var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+var {Employee} = require(__dirname+'/public/db/employee.js');
+var {User} = require(__dirname+'/public/db/user.js');
+var collector = '';
+var emp = ['Please select something'];
 
 var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600,
@@ -27,9 +32,6 @@ var sendData = (data) => {
     }
 }
 
-var collector = '';
-var emp = ['Please select something','Ayush','Tanish','Sharma','Gupta'];
-
 var populateSelect = () => {
     for(var i=0;i<emp.length;i++){
         collector = collector + `<option value="${emp[i]}">${emp[i]}</option>`
@@ -37,7 +39,14 @@ var populateSelect = () => {
     $('#sel1').html(collector);
     collector = '';
 }
-$(document).ready(() => {
+
+Employee.find({} ,(err,emps)=>{
+    if(err){
+        return console.log(err);
+    }
+    _.forEach(emps,function(emp1){
+        emp.push(emp1.name);
+    })
     populateSelect();
 });
 
