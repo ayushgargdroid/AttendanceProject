@@ -23,6 +23,7 @@ var openConn = () => {
         console.log('Port opened');
     });
 }
+openConn();
 var sendData = (data) => {
     if(port.isOpen()){
         console.log('Port checked for opening');
@@ -86,7 +87,8 @@ $(document).on('change','#sel1',(e) => {
         employee[0].id1 = '';
         employee[0].id2 = '';
         employee[0].save().then(()=>{
-            console.log('Deleted '+employee[0].name);    
+            console.log('Deleted '+employee[0].name);  
+            port.close();
         })
     });
     $('#myModalLabel').html(t);
