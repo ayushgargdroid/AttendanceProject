@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const SerialPort = require('serialport');
 const mongoose = require('mongoose');
-var {ipcRenderer} = require('electron');
+var {ipcRenderer,remote} = require('electron');
+var main = remote.require(__dirname+'/index.js');
 var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
 var collector = '';
@@ -106,13 +107,15 @@ port.on('data',(data)=>{
             employee[0].save().then(()=>{
                 console.log('Deleted '+employee[0].name);  
                 port.close();
+                main.getData();
                 $('#myModalLabel').html(emp[t]);
                 $('#myModal').modal();
                 $('#close-button').click(() => {
                     _.remove(emp,(inte) => {
                         return inte === emp[t];
                     });
-                    populateSelect();
+                    ipcRenderer.send('async',2);
+//                    populateSelect();
                 });
             })
             });
