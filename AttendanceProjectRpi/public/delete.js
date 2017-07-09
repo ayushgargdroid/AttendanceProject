@@ -11,6 +11,7 @@ var vid1 = [];
 var vid2 = [];
 var selected;
 var z = 0;
+var t;
 var previousItem;
 
 var port = new SerialPort('/dev/ttyACM0', {
@@ -70,9 +71,9 @@ var populateSelect = () => {
 //});
 
 $('#sel1').click(()=>{
+    console.log($('#sel1').val());
+    t = $('#sel1').val();
     if(t!=previousItem){
-        console.log($('#sel1').val());
-        var t = $('#sel1').val();
         if(t==0){
             return;
         }
@@ -105,7 +106,7 @@ port.on('data',(data)=>{
             employee[0].save().then(()=>{
                 console.log('Deleted '+employee[0].name);  
                 port.close();
-                $('#myModalLabel').html(t);
+                $('#myModalLabel').html(emp[t]);
                 $('#myModal').modal();
                 $('#close-button').click(() => {
                     _.remove(emp,(inte) => {
