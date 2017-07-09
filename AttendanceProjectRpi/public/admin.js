@@ -103,8 +103,9 @@ $('#sel1').click(()=>{
         _.remove(emp,(inte) => {
             return inte === emp[t];
         });
-//        populateSelect();
-    })
+        console.log(emp);
+        populateSelect();
+    });
 });
 
 port.on('data',(data) => {
@@ -138,11 +139,13 @@ port.on('data',(data) => {
                     emps[0].verified = true;
                     emps[0].save().then((doc) => {
                         main.getData();
-                        setTimeout(()=>{
-                            ipcRenderer.send('async',2);
-                        },500);
+//                        setTimeout(()=>{
+//                            ipcRenderer.send('async',2);
+//                        },500);
                         console.log('Saved'+id1+' '+id2);
                         port.close();
+                        
+                        populateSelect();    
                     })
                 }
             })

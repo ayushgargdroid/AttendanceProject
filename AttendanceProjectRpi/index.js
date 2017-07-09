@@ -82,6 +82,7 @@ ipcMain.on('async', (event, arg) => {
         }))
     }
     else if(arg==2){
+        console.log('Sending employees');
         event.sender.send('async-reply',employees);
     }
 });
