@@ -8,6 +8,7 @@ var {Employee} = require(__dirname+'/public/db/employee.js');
 var employees = [];
 
 exports.getData = (callback)=>{
+    employees = [];
     Employee.find({} ,(err,emps)=>{
         if(err){
             return console.log(err);

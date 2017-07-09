@@ -136,10 +136,7 @@ port.on('data',(data) => {
                     emps[0].id1 = id1;
                     emps[0].id2 = id2;
                     emps[0].verified = true;
-                    emps[0].save().then((err,doc) => {
-                        if(err){
-                            return console.log(err);
-                        }
+                    emps[0].save().then((doc) => {
                         main.getData();
                         console.log('Saved'+id1+' '+id2);
                         port.close();
