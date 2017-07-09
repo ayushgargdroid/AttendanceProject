@@ -105,15 +105,15 @@ port.on('data',(data)=>{
             employee[0].save().then(()=>{
                 console.log('Deleted '+employee[0].name);  
                 port.close();
-            })
-            });
-            $('#myModalLabel').html(t);
-            $('#myModal').modal();
-            $('#close-button').click(() => {
-                _.remove(emp,(inte) => {
-                    return inte === emp[t];
+                $('#myModalLabel').html(t);
+                $('#myModal').modal();
+                $('#close-button').click(() => {
+                    _.remove(emp,(inte) => {
+                        return inte === emp[t];
+                    });
+                    populateSelect();
                 });
-                populateSelect();
+            })
             });
             z = 0;
         }
@@ -121,11 +121,11 @@ port.on('data',(data)=>{
     else{
         console.log(data.toString());
     }
-})
+});
 
-$(document).on('change','#sel1',(e) => {
-    var t = $('#sel1').val();
-    selected = mongoose.Types.ObjectId(ids[t-1]);
+//$(document).on('change','#sel1',(e) => {
+//    var t = $('#sel1').val();
+//    selected = mongoose.Types.ObjectId(ids[t-1]);
 //    var selectedEmployee = _.find(employees,(employee)=>{
 //        if(ids[selected-1]==employee._id){
 //            return true;
@@ -161,4 +161,4 @@ $(document).on('change','#sel1',(e) => {
 //});
 $(document).ready(()=>{
     ipcRenderer.send('async',2);
-});
+})
