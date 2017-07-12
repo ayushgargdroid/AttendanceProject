@@ -92,8 +92,6 @@ let transporter = nodemailer.createTransport({
 
 //6am IST 7th July - 1499387400
 //86400 ms - 1 day
-//8:40 am - 1499397001144
-//9:40 am - 1499400601188
 
 if(Date.now() == 1499396498545){
     console.log('Hola');

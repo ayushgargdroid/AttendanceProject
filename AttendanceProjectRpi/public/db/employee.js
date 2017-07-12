@@ -31,6 +31,9 @@ var EmployeeSchema = new mongoose.Schema({
         trim: true,
     },
     live: [],
+    haveWorked: [],
+    late: [],
+    offs: [],
     assigned: {
         Monday:[],
         Tuesday:[],
@@ -83,9 +86,12 @@ EmployeeSchema.methods.setupDB = function(){
             daysFeb = 29;
         }
     }
-    console.log(employee.live);
     for(var i=0;i<12;i++){
+        employee.offs.push([]);
         employee.live.push([]);
+        employee.haveWorked.push([]);
+        employee.shouldWork.push([]);
+        employee.shouldWork.push([]);
     }
     for(var i=0; i<12 ; i++){
         var nod = (i%2)?30:31;
@@ -93,6 +99,10 @@ EmployeeSchema.methods.setupDB = function(){
             nod = daysFeb;
         }
         for(var j=0;j<nod;j++){
+            employee.offs[i].push([]);
+            employee.late[i].push([]);
+            employee.shouldWork[i].push([]);
+            employee.haveWorked[i].push([]);
             employee.live[i].push([]);
             employee.live[i][j].push([]);
             employee.live[i][j].push([]);
