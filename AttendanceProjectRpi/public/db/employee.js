@@ -88,10 +88,9 @@ EmployeeSchema.methods.setupDB = function(){
     }
     for(var i=0;i<12;i++){
         employee.offs.push([]);
+        employee.late.push([]);
         employee.live.push([]);
         employee.haveWorked.push([]);
-        employee.shouldWork.push([]);
-        employee.shouldWork.push([]);
     }
     for(var i=0; i<12 ; i++){
         var nod = (i%2)?30:31;
@@ -101,7 +100,6 @@ EmployeeSchema.methods.setupDB = function(){
         for(var j=0;j<nod;j++){
             employee.offs[i].push([]);
             employee.late[i].push([]);
-            employee.shouldWork[i].push([]);
             employee.haveWorked[i].push([]);
             employee.live[i].push([]);
             employee.live[i][j].push([]);
