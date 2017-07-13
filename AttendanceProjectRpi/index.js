@@ -2,14 +2,106 @@ const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
 const url = require('url');
 const _ = require('lodash');
+const mongoose = require('mongoose');
 
-var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+var {Mongoose,conn} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
+var {EmployeeLocal} = require(__dirname+'/public/db/employee-local.js');
 var employees = [];
+var mainEvent;
+
+mongoose.connection.on('disconnected',()=>{
+    console.log('sojaosjd');
+})
 
 exports.getData = (callback)=>{
     employees = [];
-    Employee.find({} ,(err,emps)=>{
+    
+    console.log('Is net connected: '+mongoose.connection._readyState);
+    if(mongoose.connection._readyState==1){
+        console.log('inn');
+        var local = [];
+        Employee.find({},(err,employees)=>{
+            if(err){
+                return console.log('Disconnected from online db: '+err);
+            }
+            employees.forEach((employee)=>{
+                EmployeeLocal.find({email: employee.email},(err,localEmployees)=>{
+                    if(err){
+                        return console.log('Disconnected from local db: '+err);
+                    }
+                    console.log('Local Employees: '+localEmployees.length);
+                    if(localEmployees.length==0){
+                        var tEmployee = _.pick(employee,['name','email','assigned','mobile','designation','live','haveWorked','late','offs','shifts','verified','id1','id2']);
+                        tEmployee._id = employee._id.toString();
+                        console.log(typeof tEmployee._id);
+                        console.log(tEmployee._id);
+                        var localEmployee = new EmployeeLocal(tEmployee);
+                        localEmployee.save().then(()=>{
+                            console.log('Stored to local DB');
+                            EmployeeLocal.find({} ,(err,emps)=>{
+                                employees = [];
+                                console.log('inn where 1');
+                                if(err){
+                                    return console.log(err);
+                                }
+                                _.forEach(emps,function(emp){
+                                    var empData = _.pick(emp,['name','_id','id1','id2','verified']);
+                                    empData._id = emp._id.toString();
+                                    employees.push(empData);
+                                });
+                                console.log('Added employee');
+                                if(!callback){
+                                    
+                                }
+                                else{
+                                    callback();
+                                }
+                            });
+                        },(err)=>{
+                            console.log(err);
+                        });
+                    }
+                    else{
+                        console.log('in else: '+employee.name);
+                        var localEmployee = localEmployees[0];
+                        var today = new Date();
+                        if(employee.live[today.getMonth()][today.getDate()-2][1].length == localEmployee.live[today.getMonth()][today.getDate()-2][1].length && employee.live[today.getMonth()][today.getDate()-2][0].length == localEmployee.live[today.getMonth()][today.getDate()-2][0].length){
+                            console.log('No diff');
+                            return;
+                        }
+                        localEmployee.live = employee.live;
+                        localEmployee.markModified('live');
+                        localEmployee.save().then(()=>{
+                            console.log('Stored to local DB live');
+                            EmployeeLocal.find({} ,(err,emps)=>{
+                                employees = [];
+                                console.log('inn where');
+                                if(err){
+                                    return console.log(err);
+                                }
+                                _.forEach(emps,function(emp){
+                                    var empData = _.pick(emp,['name','_id','id1','id2','verified']);
+                                    empData._id = emp._id.toString();
+                                    employees.push(empData);
+                                });
+                                console.log(employees);
+                                if(!callback){
+                                    
+                                }
+                                else{
+                                    callback();
+                                }
+                            });
+                        },(err)=>{
+                            console.log(err);
+                        });
+                    }
+                })
+            })
+        })
+    }
+    EmployeeLocal.find({} ,(err,emps)=>{
         if(err){
             return console.log(err);
         }
@@ -18,7 +110,6 @@ exports.getData = (callback)=>{
             empData._id = emp._id.toString();
             employees.push(empData);
         });
-        console.log(employees);
         if(!callback){
             
         }
@@ -27,7 +118,19 @@ exports.getData = (callback)=>{
         }
     });
 }
-exports.getData(createWindow);
+
+conn.on('connected',()=>{
+    console.log('Connected');
+    setTimeout(()=>{
+        exports.getData(createWindow);
+    },5000);
+    // exports.getData(createWindow);
+});
+
+var sendData = () =>{
+    mainEvent.sender.send('async-reply',employees);
+};
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
@@ -72,7 +175,8 @@ app.on('window-all-closed', () => {
   }
 })
 
-ipcMain.on('async', (event, arg) => {  
+ipcMain.on('async', (event, arg) => { 
+    mainEvent = event; 
     console.log(arg);
     if(arg==1){
         win.loadURL(url.format({
@@ -83,7 +187,7 @@ ipcMain.on('async', (event, arg) => {
     }
     else if(arg==2){
         console.log('Sending employees');
-        event.sender.send('async-reply',employees);
+        exports.getData(sendData);
     }
 });
 

@@ -1,8 +1,9 @@
 const _ = require('lodash');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
-var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+var {Mongoose,conn} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
+var {EmployeeLocal} = require(__dirname+'/public/db/employee-local.js');
 var {ipcRenderer,remote} = require('electron');
 var main = remote.require(__dirname+'/index.js');
 var SerialPort = require('serialport');
@@ -195,6 +196,48 @@ function updateTime(){
     },60000);
 }
 
+mongoose.connection.on('connected',()=>{
+    var local = [];
+    var today = new Date();
+    console.log('In Special connected fn.');
+    EmployeeLocal.find({},(err,local)=>{
+        if(err){
+            return console.log(err);
+        }
+        local.forEach((localEmployee)=>{
+            Employee.find({email: localEmployee.email},(err,employees)=>{
+                if(err){
+                    return console.log('Disconnected suddenly.');
+                }
+                if(employees==[]){
+                    Employee.find({email: localEmployee.email}).remove(()=>{
+                        console.log('Deleted'+ localEmployee.name +'from online db');
+                    });
+                }
+                console.log(employees[0])
+                var employee = employees[0];
+                if(employee.live[today.getMonth()][today.getDate()-1][1].length == localEmployee.live[today.getMonth()][today.getDate()-1][1].length && employee.live[today.getMonth()][today.getDate()-1][0].length == localEmployee.live[today.getMonth()][today.getDate()-1][0].length){
+                    console.log('No changes made!');
+                    return;
+                }
+                console.log(employee.live===localEmployee.live);
+                employee.verified = localEmployee.verified;
+                employee.id1 = localEmployee.id1;
+                employee.id2 = localEmployee.id2;
+                employee.live = localEmployee.live;
+                employee.markModified('live');
+                employee.save().then(()=>{
+                    console.log('Updated info for '+employee.name);
+                },()=>{
+                    console.log('Disconnected suddenly.');
+                });
+                mongoose.connection.close();
+            });
+        });
+    });
+    
+}); 
+
 $("#login-pin").swipe({
     tap:function(event,target){
         if(port.isOpen()){
@@ -353,12 +396,13 @@ var inputPin = function(){
 port.on('data' ,function (data) {
     var msg = data.toString();
     var t = _.toNumber(data);
+    console.log('ID returned from fps: '+t);
     if(Number.isInteger(t)){
         t = t.toString();
         _.find(employees,(employee)=>{
             if(employee.id1 == t || employee.id2 == t){
                 _id = mongoose.Types.ObjectId(employee._id);
-                Employee.find({_id},(err,employee)=>{
+                EmployeeLocal.find({_id},(err,employee)=>{
                     if(err){
                         return console.log(err);
                     }
@@ -384,17 +428,21 @@ port.on('data' ,function (data) {
                     employee[0].live = live1;
                     employee[0].markModified('live');
                     employee[0].save().then((docs)=>{
-                    console.log('---');
-                    console.log('month '+month);
-                    console.log('day '+day);
-                    console.log('hours '+hours);
-                    console.log('minutes '+minutes);
-                    console.log(employee[0].live[month][day-1][0]);
-                    console.log(employee[0].live[month][day-1][1]);
-                    console.log('Successfully updated.');
-                    openUp2();
-                    return true;  
-                });
+                        if(mongoose.connection._readyState == 1){
+                            Employee.find({_id},(err,employeeGlobal)=>{
+                                employeeGlobal[0].live = live1;
+                                employeeGlobal[0].markModified('live');
+                                employeeGlobal[0].save().then(()=>{
+                                    console.log('Updated to online db as well');
+                                },(err)=>{
+                                    console.log('Could not update to online db');
+                                });
+                            });
+                        }
+                        console.log('Successfully updated.');
+                        openUp2();
+                        return true;  
+                    });
                 });
             }
             return false;

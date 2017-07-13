@@ -3,8 +3,9 @@ const SerialPort = require('serialport');
 const mongoose = require('mongoose');
 var {ipcRenderer,remote} = require('electron');
 var main = remote.require(__dirname+'/index.js');
-var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+var {Mongoose,conn} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
+var {EmployeeLocal} = require(__dirname+'/public/db/employee-local.js');
 var collector = '';
 var emp = ['Please select something'];
 var ids = [];
@@ -61,16 +62,6 @@ var populateSelect = () => {
     collector = '';
 }
 
-//Employee.find({} ,(err,emps)=>{
-//    if(err){
-//        return console.log(err);
-//    }
-//    _.forEach(emps,function(emp1){
-//        emp.push(emp1.name);
-//    })
-//    populateSelect();
-//});
-
 $('#sel1').click(()=>{
     console.log($('#sel1').val());
     t = $('#sel1').val();
@@ -95,19 +86,14 @@ port.on('data',(data)=>{
     if(msg==1){
         z = z+1;
         if(z==2){
-            Employee.find({_id: selected},(err,employee)=>{
-            if(err){
-                return console.log(err);
-            }
-            var id1 = employee[0].id1;
-            var id2 = employee[0].id2;
-            employee[0].verified = false;
-            employee[0].id1 = '';
-            employee[0].id2 = '';
-            employee[0].save().then(()=>{
-                console.log('Deleted '+employee[0].name);  
+            EmployeeLocal.find({_id: selected}).remove(()=>{
+                console.log('Deleted '+employee[0].name+' from local db');  
                 port.close();
-                main.getData();
+                if(mongoose.connection._readyState==1){
+                    Employee.find({_id:selected}).remove(()=>{
+                        console.log('Deleted '+employee[0].name+' from net');  
+                    })
+                }
                 $('#myModalLabel').html(emp[t]);
                 $('#myModal').modal();
                 $('#close-button').click(() => {
@@ -115,9 +101,12 @@ port.on('data',(data)=>{
                         return inte === emp[t];
                     });
                     ipcRenderer.send('async',2);
-//                    populateSelect();
-                });
-            })
+                    setTimeout(()=>{
+                        populateSelect();
+                    },1000);
+                })
+            },(err)=>{
+                console.log(err);
             });
             z = 0;
         }
@@ -127,42 +116,6 @@ port.on('data',(data)=>{
     }
 });
 
-//$(document).on('change','#sel1',(e) => {
-//    var t = $('#sel1').val();
-//    selected = mongoose.Types.ObjectId(ids[t-1]);
-//    var selectedEmployee = _.find(employees,(employee)=>{
-//        if(ids[selected-1]==employee._id){
-//            return true;
-//        }
-//        return false;
-//    });
-//    Employee.find({_id: selected},(err,employee)=>{
-//        if(err){
-//            return console.log(err);
-//        }
-//        var id1 = employee[0].id1;
-//        var id2 = employee[0].id2;
-//        setTimeout(()=>{
-//            sendData(`${id1}c`);
-//            sendData(`${id2}c`);
-//        },500);
-//        employee[0].verified = false;
-//        employee[0].id1 = '';
-//        employee[0].id2 = '';
-//        employee[0].save().then(()=>{
-//            console.log('Deleted '+employee[0].name);  
-//            port.close();
-//        })
-//    });
-//    $('#myModalLabel').html(t);
-//    $('#myModal').modal();
-//    $('#close-button').click(() => {
-//        _.remove(emp,(name) => {
-//            return name === t;
-//        });
-//        populateSelect();
-//    })
-//});
 $(document).ready(()=>{
     ipcRenderer.send('async',2);
 })

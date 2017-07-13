@@ -3,8 +3,9 @@ const SerialPort = require('serialport');
 const mongoose = require('mongoose');
 var {ipcRenderer,remote} = require('electron');
 var main = remote.require(__dirname+'/index.js');
-var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+var {Mongoose,conn} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
+var {EmployeeLocal} = require(__dirname+'/public/db/employee-local.js');
 var collector = '';
 var emp = ['Please select from below'];
 var ids = [];
@@ -29,6 +30,7 @@ var port = new SerialPort('/dev/ttyACM0', {
 //});
 
 ipcRenderer.on('async-reply',(event,args)=>{
+    console.log('received');
     employees = args;
     _.forEach(employees,function(emp1){
         if(emp1.verified==false){
@@ -60,21 +62,6 @@ var sendData = (data) => {
 }
 var i=0;
 var id1,id2;
-//$(document).on('change','#sel1',(e) => {
-//    var t = $('#sel1').val();
-//    selected = t;
-//    setTimeout(()=>{
-//        sendData('b');
-//    },1500);
-//    $('#myModalLabel').html(emp[t]);
-//    $('#myModal').modal();
-//    $('#close-button').click(() => {
-//        _.remove(emp,(inte) => {
-//            return inte === t;
-//        });
-//        populateSelect();
-//    })
-//});
 
 var populateSelect = () => {
     for(var j=0;j<emp.length;j++){
@@ -112,7 +99,6 @@ port.on('data',(data) => {
     var msg = data.toString();
     if(msg === 'Remove finger'){
         i = i + 1;
-        console.log(i);
         if(i<=3){
             $(`#to${i}`).css('display','block');
         }
@@ -129,24 +115,35 @@ port.on('data',(data) => {
             id2 = msg;
             i = 0;
             _id = mongoose.Types.ObjectId(ids[selected-1]);
-            Employee.find({_id},(err,emps) => {
+            EmployeeLocal.find({_id},(err,emps) => {
                 if(err){
                     console.log(err);
                 }
                 else{
-                    emps[0].id1 = id1;
-                    emps[0].id2 = id2;
-                    emps[0].verified = true;
-                    emps[0].save().then((doc) => {
-                        main.getData();
-//                        setTimeout(()=>{
-//                            ipcRenderer.send('async',2);
-//                        },500);
-                        console.log('Saved'+id1+' '+id2);
-                        port.close();
-                        
-                        populateSelect();    
-                    })
+                    if(mongoose.connection._readyState==1){
+                        Employee.find({_id},(err,employees)=>{
+                            employee = employees[0];
+                            employee.id1 = id1;
+                            employee.id2 = id2;
+                            employee.verified = true;
+                            emps[0].id1 = id1;
+                            emps[0].id2 = id2;
+                            emps[0].verified = true;
+                            emps[0].save().then((doc)=>{
+                                ipcRenderer.send('async',2);
+                                console.log('Saved'+id1+' '+id2+' to local db');
+                                port.close();
+                                setTimeout(()=>{
+                                    populateSelect();
+                                },1000);
+                                employee.save().then(()=>{
+                                    console.log('Saved'+id1+' '+id2+' to global db');
+                                },(err)=>{
+                                    console.log('Could not store online');
+                                });
+                            });
+                        })
+                    }  
                 }
             })
         }

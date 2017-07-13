@@ -2,8 +2,9 @@ const _ = require('lodash');
 const SerialPort = require('serialport');
 const mongoose = require('mongoose');
 var {ipcRenderer} = require('electron');
-var {Mongoose} = require(__dirname+'/public/db/mongoose.js');
+var {Mongoose,conn} = require(__dirname+'/public/db/mongoose.js');
 var {Employee} = require(__dirname+'/public/db/employee.js');
+var {EmployeeLocal} = require(__dirname+'/public/db/employee-local.js');
 var collector = '';
 var emp = ['Please select something'];
 var ids = [];
@@ -39,25 +40,16 @@ var sendData = (data) => {
 }
 
 var populateSelect = () => {
+    collector = '';
     for(var j=0;j<emp.length;j++){
         collector = collector + `<option value="${j}">${emp[j]}</option>`
     }
     $('#sel1').html(collector);
-    collector = '';
 }
-
-//Employee.find({} ,(err,emps)=>{
-//    if(err){
-//        return console.log(err);
-//    }
-//    _.forEach(emps,function(emp1){
-//        emp.push(emp1.name);
-//    })
-//    populateSelect();
-//});
 
 ipcRenderer.on('async-reply',(event,args)=>{
     employees = args;
+    console.log(employees);
     _.forEach(employees,function(emp1){
         if(emp1.verified){
             emp.push(emp1.name);
@@ -70,10 +62,11 @@ ipcRenderer.on('async-reply',(event,args)=>{
 $(document).on('change','#sel1',(e) => {
     var t = $('#sel1').val();
     selected = mongoose.Types.ObjectId(ids[t-1]);
-    Employee.find({_id: selected},(err,employee)=>{
+    EmployeeLocal.find({_id: selected},(err,employee)=>{
         if(err){
             return console.log(err);
         }
+        console.log(employee);
         var current = new Date();
         var month = current.getMonth();
         var day = current.getDate();
@@ -94,15 +87,22 @@ $(document).on('change','#sel1',(e) => {
             $('#message').html('Employee successfully logged in!');
         }
         employee[0].live = live1;
+        if(mongoose.connection._readyState==1){
+            Employee.find({_id: selected},(err,employeeGlobal)=>{
+                if(err){
+                    return console.log('Could not save to net');
+                }
+                employeeGlobal[0].live = live1;
+                employeeGlobal[0].markModified('live');
+                employeeGlobal[0].save().then(()=>{
+                    console.log('Updated to the net');
+                },(err)=>{
+                    console.log('Could not save to net');
+                })
+            });
+        }
         employee[0].markModified('live');
         employee[0].save().then((docs)=>{
-            console.log('---');
-            console.log('month '+month);
-            console.log('day '+day);
-            console.log('hours '+hours);
-            console.log('minutes '+minutes);
-            console.log(employee[0].live[month][day-1][0]);
-            console.log(employee[0].live[month][day-1][1]);
             console.log('Successfully updated.');
             $('#myModalLabel').html(t);
             $('#myModal').modal();
