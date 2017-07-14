@@ -45,7 +45,7 @@ var sendData = (data) => {
 ipcRenderer.on('async-reply',(event,args)=>{
     employees = args;
     _.forEach(employees,function(emp1){
-        if(emp1.verified==true){
+        {
             emp.push(emp1.name);
             ids.push(emp1._id); 
             vid1.push(emp1.id1);
