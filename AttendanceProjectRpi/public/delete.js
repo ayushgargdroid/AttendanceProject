@@ -90,7 +90,7 @@ port.on('data',(data)=>{
                 console.log('Deleted from local db');  
                 port.close();
                 if(mongoose.connection._readyState==1){
-                    console('Net is connected. Attempting to delete from net.')
+                    console.log('Net is connected. Attempting to delete from net.')
                     Employee.find({_id:selected}).remove(()=>{
                         console.log('Deleted from net');  
                     })
