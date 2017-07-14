@@ -187,6 +187,28 @@ ipcMain.on('async', (event, arg) => {
             }
         },3000);
     }
+    else if(arg==3){
+        console.log('Recieved for add');
+        win.loadURL(url.format({
+            pathname: path.join(__dirname, 'admin.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
+    }
+    else if(arg==4){
+        win.loadURL(url.format({
+            pathname: path.join(__dirname, 'delete.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
+    }
+    else if(arg==5){
+        win.loadURL(url.format({
+            pathname: path.join(__dirname, 'login.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
+    }
 });
 
 app.on('activate', () => {

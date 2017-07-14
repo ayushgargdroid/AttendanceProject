@@ -116,4 +116,20 @@ port.on('data',(data)=>{
 
 $(document).ready(()=>{
     ipcRenderer.send('async',2);
-})
+});
+$('#signout').click(()=>{
+    console.log('Calling index');
+    ipcRenderer.send('async',1);
+});
+$('#add').click(()=>{
+    console.log('Calling add');
+    ipcRenderer.send('async',3);
+});
+$('#delete').click(()=>{
+    console.log('Calling delete');
+    ipcRenderer.send('async',4);
+});
+$('#login').click(()=>{
+    console.log('Calling login');
+    ipcRenderer.send('async',5);
+});

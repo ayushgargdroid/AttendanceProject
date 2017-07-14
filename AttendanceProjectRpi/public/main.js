@@ -237,34 +237,6 @@ mongoose.connection.on('connected',()=>{
             })
         })
     });
-    // EmployeeLocal.find({},(err,local)=>{
-    //     if(err){
-    //         return console.log(err);
-    //     }
-    //     local.forEach((localEmployee)=>{
-    //         Employee.find({email: localEmployee.email},(err,employees)=>{
-    //             if(err){
-    //                 return console.log('Disconnected suddenly.');
-    //             }
-    //             var employee = employees[0];
-    //             console.log('Verifying data for: '+employee.name);
-    //             if((employee.live[today.getMonth()][today.getDate()-1][1].length == localEmployee.live[today.getMonth()][today.getDate()-1][1].length && employee.live[today.getMonth()][today.getDate()-1][0].length == localEmployee.live[today.getMonth()][today.getDate()-1][0].length)&&employee.verified==localEmployee.verified){
-    //                 console.log('No changes made!');
-    //                 return;
-    //             }
-    //             employee.verified = localEmployee.verified;
-    //             employee.id1 = localEmployee.id1;
-    //             employee.id2 = localEmployee.id2;
-    //             employee.live = localEmployee.live;
-    //             employee.markModified('live');
-    //             employee.save().then(()=>{
-    //                 console.log('Updated info for '+employee.name);
-    //             },()=>{
-    //                 console.log('Disconnected suddenly.');
-    //             });
-    //         });
-    //     });
-    // });
     
 }); 
 

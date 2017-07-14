@@ -18,17 +18,6 @@ var port = new SerialPort('/dev/ttyACM0', {
     parser: SerialPort.parsers.readline('\r\n')
 });
 
-//Employee.find({verified: false} ,(err,emps)=>{
-//    if(err){
-//        return console.log(err);
-//    }
-//    _.forEach(emps,function(emp1){
-//        emp.push(emp1.name);
-//        ids.push(emp1._id);
-//    })
-//    populateSelect();
-//});
-
 ipcRenderer.on('async-reply',(event,args)=>{
     console.log('received');
     employees = args;
@@ -174,4 +163,20 @@ port.on('data',(data) => {
 openConn();
 $(document).ready(()=>{
     ipcRenderer.send('async',2);
+});
+$('#signout').click(()=>{
+    console.log('Calling index');
+    ipcRenderer.send('async',1);
+});
+$('#add').click(()=>{
+    console.log('Calling add');
+    ipcRenderer.send('async',3);
+});
+$('#delete').click(()=>{
+    console.log('Calling delete');
+    ipcRenderer.send('async',4);
+});
+$('#login').click(()=>{
+    console.log('Calling login');
+    ipcRenderer.send('async',5);
 });
