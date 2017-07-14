@@ -147,7 +147,6 @@ function startedTyping(){
 }
 function openUp1(){    
     toSuccess = Date.now();
-    updateTime();
     $("#login-pin-form").addClass("has-success");
     $("#failiure").html('');
     $("#success").html('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
@@ -155,7 +154,6 @@ function openUp1(){
 }
 function openUp2(){
     toSuccess = Date.now();
-    updateTime();
     $("#login-pin-form").addClass("has-success");
     $("#failiure").html('');
     $("#success").html('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
@@ -185,56 +183,88 @@ function openUp2(){
     },5000);
 }
 
-function updateTime(){
-    var currentTime = new Date();
-    var currentTimeBar = 0;
-    currentTimeBar = (currentTime.getHours() * 46)+(currentTime.getMinutes()*42/60);
-    console.log(currentTimeBar);
-    $("#current-time").css('top',currentTimeBar+'px');
-    var t = setTimeout(function(){
-        updateTime();
-    },60000);
-}
-
 mongoose.connection.on('connected',()=>{
     var local = [];
     var today = new Date();
     console.log('In Special connected fn.');
-    EmployeeLocal.find({},(err,local)=>{
+    Employee.find({},(err,employees)=>{
         if(err){
-            return console.log(err);
+            return console.log('Disconnected suddenly.');
         }
-        local.forEach((localEmployee)=>{
-            Employee.find({email: localEmployee.email},(err,employees)=>{
+        employees.forEach((employee)=>{
+            EmployeeLocal.find({email: employee.email},(err,employeesLocal)=>{
                 if(err){
                     return console.log('Disconnected suddenly.');
                 }
-                if(employees==[]){
-                    Employee.find({email: localEmployee.email}).remove(()=>{
-                        console.log('Deleted'+ localEmployee.name +'from online db');
+                if(employeesLocal.length==0){
+                    var timestamp = employee._id.toString().substring(0,8);
+                    date = new Date( parseInt( timestamp, 16 ) * 1000 );
+                    var name = employee.name;
+                    if(date.getDate() < today.getDate()){
+                        Employee.find({email: employee.email}).remove(()=>{
+                            console.log('Deleted '+name+' from the net');
+                        })
+                    }
+                    else{
+                        var tEmployee = _.pick(employee,['name','email','assigned','mobile','designation','live','haveWorked','late','offs','shifts','verified','id1','id2']);
+                        tEmployee._id = employee._id.toString();
+                        var localEmployee = new EmployeeLocal(tEmployee);
+                        localEmployee.save().then(()=>{
+                            console.log('Added employee '+localEmployee.name+' to local db');
+                        },(err)=>{
+                            return console.log('Local DB storing error while adding a new employee: '+err);
+                        });
+                    }
+                }
+                else{
+                    var employeeLocal = employeesLocal[0];
+                    console.log('Verifying data for: '+employeeLocal.name);
+                    if((employee.live[today.getMonth()][today.getDate()-1][1].length == employeeLocal.live[today.getMonth()][today.getDate()-1][1].length && employee.live[today.getMonth()][today.getDate()-1][0].length == employeeLocal.live[today.getMonth()][today.getDate()-1][0].length)&&employee.verified==employeeLocal.verified){
+                        console.log('No changes made!');
+                        return;
+                    }
+                    employee.verified = employeeLocal.verified;
+                    employee.id1 = employeeLocal.id1;
+                    employee.id2 = employeeLocal.id2;
+                    employee.live = employeeLocal.live;
+                    employee.markModified('live');
+                    employee.save().then(()=>{
+                        console.log('Updated info for '+employee.name);
+                    },()=>{
+                        console.log('Disconnected suddenly.');
                     });
                 }
-                console.log(employees[0])
-                var employee = employees[0];
-                if(employee.live[today.getMonth()][today.getDate()-1][1].length == localEmployee.live[today.getMonth()][today.getDate()-1][1].length && employee.live[today.getMonth()][today.getDate()-1][0].length == localEmployee.live[today.getMonth()][today.getDate()-1][0].length){
-                    console.log('No changes made!');
-                    return;
-                }
-                console.log(employee.live===localEmployee.live);
-                employee.verified = localEmployee.verified;
-                employee.id1 = localEmployee.id1;
-                employee.id2 = localEmployee.id2;
-                employee.live = localEmployee.live;
-                employee.markModified('live');
-                employee.save().then(()=>{
-                    console.log('Updated info for '+employee.name);
-                },()=>{
-                    console.log('Disconnected suddenly.');
-                });
-                mongoose.connection.close();
-            });
-        });
+            })
+        })
     });
+    // EmployeeLocal.find({},(err,local)=>{
+    //     if(err){
+    //         return console.log(err);
+    //     }
+    //     local.forEach((localEmployee)=>{
+    //         Employee.find({email: localEmployee.email},(err,employees)=>{
+    //             if(err){
+    //                 return console.log('Disconnected suddenly.');
+    //             }
+    //             var employee = employees[0];
+    //             console.log('Verifying data for: '+employee.name);
+    //             if((employee.live[today.getMonth()][today.getDate()-1][1].length == localEmployee.live[today.getMonth()][today.getDate()-1][1].length && employee.live[today.getMonth()][today.getDate()-1][0].length == localEmployee.live[today.getMonth()][today.getDate()-1][0].length)&&employee.verified==localEmployee.verified){
+    //                 console.log('No changes made!');
+    //                 return;
+    //             }
+    //             employee.verified = localEmployee.verified;
+    //             employee.id1 = localEmployee.id1;
+    //             employee.id2 = localEmployee.id2;
+    //             employee.live = localEmployee.live;
+    //             employee.markModified('live');
+    //             employee.save().then(()=>{
+    //                 console.log('Updated info for '+employee.name);
+    //             },()=>{
+    //                 console.log('Disconnected suddenly.');
+    //             });
+    //         });
+    //     });
+    // });
     
 }); 
 

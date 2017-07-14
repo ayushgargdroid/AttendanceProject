@@ -10,89 +10,53 @@ var {EmployeeLocal} = require(__dirname+'/public/db/employee-local.js');
 var employees = [];
 var mainEvent;
 
-mongoose.connection.on('disconnected',()=>{
-    console.log('sojaosjd');
-})
-
 exports.getData = (callback)=>{
     employees = [];
-    
     console.log('Is net connected: '+mongoose.connection._readyState);
     if(mongoose.connection._readyState==1){
-        console.log('inn');
-        var local = [];
-        Employee.find({},(err,employees)=>{
+        console.log('Net is connected');
+        employees = [];
+        Employee.find({},(err,employeesGlobal)=>{
             if(err){
                 return console.log('Disconnected from online db: '+err);
             }
-            employees.forEach((employee)=>{
+            employeesGlobal.forEach((employee)=>{
                 EmployeeLocal.find({email: employee.email},(err,localEmployees)=>{
                     if(err){
                         return console.log('Disconnected from local db: '+err);
                     }
-                    console.log('Local Employees: '+localEmployees.length);
                     if(localEmployees.length==0){
+                        console.log('A new employee would be added to the local db');
                         var tEmployee = _.pick(employee,['name','email','assigned','mobile','designation','live','haveWorked','late','offs','shifts','verified','id1','id2']);
                         tEmployee._id = employee._id.toString();
-                        console.log(typeof tEmployee._id);
-                        console.log(tEmployee._id);
                         var localEmployee = new EmployeeLocal(tEmployee);
                         localEmployee.save().then(()=>{
-                            console.log('Stored to local DB');
-                            EmployeeLocal.find({} ,(err,emps)=>{
-                                employees = [];
-                                console.log('inn where 1');
-                                if(err){
-                                    return console.log(err);
-                                }
-                                _.forEach(emps,function(emp){
-                                    var empData = _.pick(emp,['name','_id','id1','id2','verified']);
-                                    empData._id = emp._id.toString();
-                                    employees.push(empData);
-                                });
-                                console.log('Added employee');
-                                if(!callback){
-                                    
-                                }
-                                else{
-                                    callback();
-                                }
-                            });
+                            console.log('Stored to local DB '+employee.name);
+                            var empData = _.pick(localEmployee,['name','_id','id1','id2','verified']);
+                            empData._id = localEmployee._id.toString();
+                            employees.push(empData);
                         },(err)=>{
                             console.log(err);
                         });
                     }
                     else{
-                        console.log('in else: '+employee.name);
+                        console.log('Data for '+employee.name+' was found in local db');
                         var localEmployee = localEmployees[0];
                         var today = new Date();
                         if(employee.live[today.getMonth()][today.getDate()-2][1].length == localEmployee.live[today.getMonth()][today.getDate()-2][1].length && employee.live[today.getMonth()][today.getDate()-2][0].length == localEmployee.live[today.getMonth()][today.getDate()-2][0].length){
                             console.log('No diff');
+                            var empData = _.pick(employee,['name','_id','id1','id2','verified']);
+                            empData._id = employee._id.toString();
+                            employees.push(empData);
                             return;
                         }
                         localEmployee.live = employee.live;
                         localEmployee.markModified('live');
                         localEmployee.save().then(()=>{
-                            console.log('Stored to local DB live');
-                            EmployeeLocal.find({} ,(err,emps)=>{
-                                employees = [];
-                                console.log('inn where');
-                                if(err){
-                                    return console.log(err);
-                                }
-                                _.forEach(emps,function(emp){
-                                    var empData = _.pick(emp,['name','_id','id1','id2','verified']);
-                                    empData._id = emp._id.toString();
-                                    employees.push(empData);
-                                });
-                                console.log(employees);
-                                if(!callback){
-                                    
-                                }
-                                else{
-                                    callback();
-                                }
-                            });
+                            console.log('Stored to local DB live for '+localEmployee.name);
+                            var empData = _.pick(localEmployee,['name','_id','id1','id2','verified']);
+                            empData._id = localEmployee._id.toString();
+                            employees.push(empData);
                         },(err)=>{
                             console.log(err);
                         });
@@ -101,10 +65,34 @@ exports.getData = (callback)=>{
             })
         })
     }
+    else{
+        EmployeeLocal.find({} ,(err,emps)=>{
+            if(err){
+                return console.log(err);
+            }
+            console.log('Net was not connected so accessing local db');
+            _.forEach(emps,function(emp){
+                var empData = _.pick(emp,['name','_id','id1','id2','verified']);
+                empData._id = emp._id.toString();
+                employees.push(empData);
+            });
+            if(!callback){
+                
+            }
+            else{
+                callback();
+            }
+        });
+    }
+}
+
+var backup = (callback)=>{
+    employees = [];
     EmployeeLocal.find({} ,(err,emps)=>{
         if(err){
             return console.log(err);
         }
+        console.log('BACKUP Net was not connected so accessing local db');
         _.forEach(emps,function(emp){
             var empData = _.pick(emp,['name','_id','id1','id2','verified']);
             empData._id = emp._id.toString();
@@ -120,11 +108,12 @@ exports.getData = (callback)=>{
 }
 
 conn.on('connected',()=>{
-    console.log('Connected');
     setTimeout(()=>{
-        exports.getData(createWindow);
+        exports.getData();
     },5000);
-    // exports.getData(createWindow);
+    setTimeout(()=>{
+        createWindow();
+    },10000);
 });
 
 var sendData = () =>{
@@ -177,7 +166,6 @@ app.on('window-all-closed', () => {
 
 ipcMain.on('async', (event, arg) => { 
     mainEvent = event; 
-    console.log(arg);
     if(arg==1){
         win.loadURL(url.format({
             pathname: path.join(__dirname, 'index.html'),
@@ -186,8 +174,18 @@ ipcMain.on('async', (event, arg) => {
         }))
     }
     else if(arg==2){
-        console.log('Sending employees');
-        exports.getData(sendData);
+        exports.getData();
+        setTimeout(()=>{
+            console.log(mongoose.connection._readyState);
+            console.log('Sending employees');
+            console.log(employees);
+            if(employees.length == 0){
+                backup(sendData);
+            }
+            else{
+                event.sender.send('async-reply',employees);
+            }
+        },3000);
     }
 });
 

@@ -33,7 +33,6 @@ openConn();
 var sendData = (data) => {
     if(port.isOpen()){
         console.log('Port checked for opening');
-        console.log(data);
         port.write(data,(err) => {
             if(err){
                 return console.log(err);
@@ -45,13 +44,14 @@ var sendData = (data) => {
 ipcRenderer.on('async-reply',(event,args)=>{
     employees = args;
     _.forEach(employees,function(emp1){
-        {
+        if(emp1.verified==true){
             emp.push(emp1.name);
             ids.push(emp1._id); 
             vid1.push(emp1.id1);
             vid2.push(emp1.id2);
         }
     })
+    console.log('Got reply from main process. Now populating');
     populateSelect();
 });
 var populateSelect = () => {
@@ -87,11 +87,12 @@ port.on('data',(data)=>{
         z = z+1;
         if(z==2){
             EmployeeLocal.find({_id: selected}).remove(()=>{
-                console.log('Deleted '+employee[0].name+' from local db');  
+                console.log('Deleted from local db');  
                 port.close();
                 if(mongoose.connection._readyState==1){
+                    console('Net is connected. Attempting to delete from net.')
                     Employee.find({_id:selected}).remove(()=>{
-                        console.log('Deleted '+employee[0].name+' from net');  
+                        console.log('Deleted from net');  
                     })
                 }
                 $('#myModalLabel').html(emp[t]);
@@ -101,9 +102,6 @@ port.on('data',(data)=>{
                         return inte === emp[t];
                     });
                     ipcRenderer.send('async',2);
-                    setTimeout(()=>{
-                        populateSelect();
-                    },1000);
                 })
             },(err)=>{
                 console.log(err);
@@ -112,7 +110,7 @@ port.on('data',(data)=>{
         }
     }
     else{
-        console.log(data.toString());
+        console.log('Could not delete');
     }
 });
 
