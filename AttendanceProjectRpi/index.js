@@ -14,6 +14,7 @@ exports.getData = (callback)=>{
     employees = [];
     console.log('Is net connected: '+mongoose.connection._readyState);
     if(mongoose.connection._readyState==1){
+        var today = new Date();
         console.log('Net is connected');
         employees = [];
         Employee.find({},(err,employeesGlobal)=>{
@@ -26,23 +27,29 @@ exports.getData = (callback)=>{
                         return console.log('Disconnected from local db: '+err);
                     }
                     if(localEmployees.length==0){
-                        console.log('A new employee would be added to the local db');
-                        var tEmployee = _.pick(employee,['name','email','assigned','mobile','designation','live','haveWorked','late','offs','shifts','verified','id1','id2']);
-                        tEmployee._id = employee._id.toString();
-                        var localEmployee = new EmployeeLocal(tEmployee);
-                        localEmployee.save().then(()=>{
-                            console.log('Stored to local DB '+employee.name);
-                            var empData = _.pick(localEmployee,['name','_id','id1','id2','verified']);
-                            empData._id = localEmployee._id.toString();
-                            employees.push(empData);
-                        },(err)=>{
-                            console.log(err);
-                        });
+                        var timestamp = employee._id.toString().substring(0,8);
+                        date = new Date( parseInt( timestamp, 16 ) * 1000 );
+                        if(date.getDate() == today.getDate()){
+                            console.log('A new employee would be added to the local db');
+                            var tEmployee = _.pick(employee,['name','email','assigned','mobile','designation','live','haveWorked','late','offs','shifts','verified','id1','id2']);
+                            tEmployee._id = employee._id.toString();
+                            var localEmployee = new EmployeeLocal(tEmployee);
+                            localEmployee.save().then(()=>{
+                                console.log('Stored to local DB '+employee.name);
+                                var empData = _.pick(localEmployee,['name','_id','id1','id2','verified']);
+                                empData._id = localEmployee._id.toString();
+                                employees.push(empData);
+                            },(err)=>{
+                                console.log(err);
+                            });
+                        }
+                        else{
+                            console.log('An employee deleted from the local db is present in global db '+employee.name);
+                        }
                     }
                     else{
                         console.log('Data for '+employee.name+' was found in local db');
                         var localEmployee = localEmployees[0];
-                        var today = new Date();
                         if(employee.live[today.getMonth()][today.getDate()-2][1].length == localEmployee.live[today.getMonth()][today.getDate()-2][1].length && employee.live[today.getMonth()][today.getDate()-2][0].length == localEmployee.live[today.getMonth()][today.getDate()-2][0].length){
                             console.log('No diff');
                             var empData = _.pick(employee,['name','_id','id1','id2','verified']);
