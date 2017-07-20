@@ -52,10 +52,16 @@ var EmployeeSchema = new mongoose.Schema({
         required: true
     },
     id1: {
-        type: String
+        type: String,
+        required: true
     },
     id2: {
-        type: String
+        type: String,
+        required: true
+    },
+    doable: {
+        type: Number,
+        required: true
     }
 });
 
@@ -106,6 +112,7 @@ EmployeeSchema.methods.setupDB = function(){
             employee.live[i][j].push([]);
         }
     }
+    doable = 0;
 //    employee.months[0].January.a.in.push('a');
     return employee.save();
 }

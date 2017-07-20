@@ -61,6 +61,9 @@ var EmployeeSchema = new mongoose.Schema({
     },
     id2: {
         type: String
+    },
+    doable: {
+        type: Number
     }
 },{
     _id:false
