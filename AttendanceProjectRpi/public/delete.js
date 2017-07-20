@@ -62,21 +62,29 @@ var populateSelect = () => {
     collector = '';
 }
 
+$('#go').click(()=>{
+    $('#myModal').modal('hide');
+    t = $('#sel1').val(); 
+    selected = mongoose.Types.ObjectId(ids[t-1]);
+    if(!port.isOpen()){
+        openConn();
+    }
+    setTimeout(()=>{
+        sendData(`${vid1[t-1]}c`);
+        sendData(`${vid2[t-1]}c`);
+    },1500);
+});
+
 $('#sel1').click(()=>{
-    console.log($('#sel1').val());
-    t = $('#sel1').val();
+    t = $('#sel1').val(); 
     if(t!=previousItem){
         if(t==0){
             return;
         }
+        $('#modal1-body').html('Are you sure, you want to delete '+emp[t]);
+        $('#myModal').modal();
+        console.log($('#sel1').val());
         selected = mongoose.Types.ObjectId(ids[t-1]);
-        if(!port.isOpen()){
-            openConn();
-        }
-        setTimeout(()=>{
-            sendData(`${vid1[t-1]}c`);
-            sendData(`${vid2[t-1]}c`);
-        },1500);
         previousItem = t;    
     }
 });
@@ -95,8 +103,8 @@ port.on('data',(data)=>{
                         console.log('Deleted from net');  
                     })
                 }
-                $('#myModalLabel').html(emp[t]);
-                $('#myModal').modal();
+                $('#myModalLabel2').html(emp[t]);
+                $('#myModal2').modal();
                 $('#close-button').click(() => {
                     _.remove(emp,(inte) => {
                         return inte === emp[t];
