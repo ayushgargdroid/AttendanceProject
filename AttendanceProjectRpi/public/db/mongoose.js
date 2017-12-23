@@ -6,14 +6,15 @@ var options = { server: { socketOptions: { keepAlive: 5000, connectTimeoutMS: 50
                 replset: { socketOptions: { keepAlive: 5000, connectTimeoutMS : 5000 } } };
 
 var conn = mongoose.createConnection('mongodb://localhost:27017/Clinic',options);
-mongoose.connect(netUri,options).then(()=>{
 
+mongoose.connect(netUri,options).then(()=>{
+    console.log('Net is connected')
 }).catch((e)=>{
-    console.log('Error from hoe');
+    console.log('Net is not connected');
 });
 
 mongoose.connection.on('disconnected',()=>{
-    console.log('Disconnected');
+    console.log('Web db disconnected');
     // mongoose.disconnect();
     setTimeout(()=>{
         mongoose.connect(netUri,options);
@@ -25,7 +26,7 @@ mongoose.connection.on('disconnected',()=>{
 // })
 
 mongoose.connection.on('error',()=>{
-    console.log('Error');
+    console.log('Error connecting web db');
 });
 
 conn.on('error',()=>{
@@ -37,7 +38,7 @@ conn.on('connected',()=>{
 })
 
 mongoose.connection.once('connected', function() {
-	console.log("Connected to database");
+	console.log("Connected to web db");
 });
 
 module.exports = {
