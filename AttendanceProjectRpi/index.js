@@ -114,6 +114,8 @@ var backup = (callback)=>{
     });
 }
 
+
+//Starting point - connection checked for local db (conn is connection to local db)
 conn.on('connected',()=>{
     setTimeout(()=>{
         exports.getData();

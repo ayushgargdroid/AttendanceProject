@@ -95,7 +95,7 @@ let transporter = nodemailer.createTransport({
 //86400 ms - 1 day
 
 if(Date.now() == 1499396498545){
-    console.log('Hola');
+    console.log('Sending Guard Pin');
     correctPin = _.toString(_.random(0,9999));
     let mailOptions = {
         from: 'Ayush Garg <ayushgargdroid@gmail.com>',
@@ -132,12 +132,12 @@ var sendData = (data) => {
     }
     setTimeout(()=>{
         console.log('Port checked for opening');
-        console.log(data);
+        // console.log(data);
         port.write(data,(err) => {
             if(err){
                 return console.log(err);
             }
-            console.log(data + ' sent.');
+            // console.log(data + ' sent.');
         });
     },timeout);
 }
@@ -164,7 +164,6 @@ function openUp2(){
     slideUpObj.followup = null;
     slideUpObj.initiate();
     setTimeout(() => {
-        console.log('yolo');
         $('#main-placeholder-logo').css("margin-top","170px")
         slideDownObj.start = -485;
         slideDownObj.end = 0;

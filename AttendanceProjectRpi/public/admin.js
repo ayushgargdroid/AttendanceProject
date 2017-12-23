@@ -130,6 +130,8 @@ port.on('data',(data) => {
                                 },(err)=>{
                                     console.log('Could not store online');
                                 });
+                            },(err)=>{
+                                console.log('Could not save to local db');
                             });
                         })
                     }  

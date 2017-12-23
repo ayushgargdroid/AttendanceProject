@@ -9,9 +9,9 @@ var collector = '';
 var emp = ['Please select something'];
 var ids = [];
 
-$('#sel1').click(()=>{
-    console.log($('#sel1').val());
-})
+// $('#sel1').click(()=>{
+//     console.log($('#sel1').val());
+// })
 
 var port = new SerialPort('/dev/ttyACM0', {
     baudRate: 9600,
@@ -64,7 +64,8 @@ $(document).on('change','#sel1',(e) => {
     selected = mongoose.Types.ObjectId(ids[t-1]);
     EmployeeLocal.find({_id: selected},(err,employee)=>{
         if(err){
-            return console.log(err);
+            // return console.log(err);
+            return;
         }
         console.log(employee);
         var current = new Date();
@@ -106,6 +107,8 @@ $(document).on('change','#sel1',(e) => {
             console.log('Successfully updated.');
             $('#myModalLabel').html(t);
             $('#myModal').modal();
+        },(err)=>{
+            console.log('Could not save to local db');
         });
     });
     $('#close-button').click(() => {
