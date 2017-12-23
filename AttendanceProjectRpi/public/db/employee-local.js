@@ -103,10 +103,16 @@ EmployeeSchema.methods.setupDB = function(){
         employee.haveWorked.push([]);
     }
     for(var i=0; i<12 ; i++){
-        var nod = (i%2)?30:31;
+        var nod = 0;
+        if(i<=6){
+            nod = (i%2)?30:31;
+        }
+        else{
+            nod = (i%2)?31:30;
+        }
         if(i===1){
             nod = daysFeb;
-        }
+}
         for(var j=0;j<nod;j++){
             employee.offs[i].push([]);
             employee.late[i].push([]);
