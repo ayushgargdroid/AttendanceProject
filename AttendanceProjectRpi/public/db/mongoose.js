@@ -9,6 +9,8 @@ var conn = mongoose.createConnection('mongodb://localhost:27017/Clinic',options)
 
 mongoose.connect(netUri,options).then(()=>{
     console.log('Net is connected')
+},(e)=>{
+    console.log('Net is not connected');
 }).catch((e)=>{
     console.log('Net is not connected');
 });
