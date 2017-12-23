@@ -19,7 +19,11 @@ mongoose.connection.on('disconnected',()=>{
     console.log('Web db disconnected');
     // mongoose.disconnect();
     setTimeout(()=>{
-        mongoose.connect(netUri,options);
+        mongoose.connect(netUri,options).then(()=>{
+            console.log('Net is connected');
+        },(e)=>{
+            console.log('Net is not connected');
+        });
     },10000);
 });
 
