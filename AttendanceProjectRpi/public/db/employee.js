@@ -34,6 +34,7 @@ var EmployeeSchema = new mongoose.Schema({
     haveWorked: [],
     late: [],
     offs: [],
+    pastAssigned: [],
     assigned: {
         Monday:[],
         Tuesday:[],
@@ -60,6 +61,10 @@ var EmployeeSchema = new mongoose.Schema({
         required: true
     },
     doable: {
+        type: Number,
+        required: true
+    },
+    availableLeaves: {
         type: Number,
         required: true
     }
@@ -96,6 +101,7 @@ EmployeeSchema.methods.setupDB = function(){
         employee.offs.push([]);
         employee.late.push([]);
         employee.live.push([]);
+        employee.pastAssigned.push([]);
         employee.haveWorked.push([]);
     }
     for(var i=0; i<12 ; i++){
@@ -116,9 +122,13 @@ EmployeeSchema.methods.setupDB = function(){
             employee.live[i].push([]);
             employee.live[i][j].push([]);
             employee.live[i][j].push([]);
+            employee.pastAssigned[i].push([]);
+            employee.pastAssigned[i][j].push([]);
+            employee.pastAssigned[i][j].push([]);
         }
     }
     doable = 0;
+    availableLeaves = 1;
 //    employee.months[0].January.a.in.push('a');
     return employee.save();
 }
